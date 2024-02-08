@@ -1,0 +1,107 @@
+'use client'
+import React, { useState } from 'react';
+import styles from './styles/line-chart.module.scss';
+import * as d3 from 'd3';
+
+type propType = {
+  data: number[];
+  horizontalLabels: string[];
+  verticalLabels?: string[];
+  width?: number;
+  height?: number;
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+};
+
+export default function LineChart({
+  data,
+  horizontalLabels,
+  verticalLabels,
+  width = 640,
+  height = 400,
+  marginTop = 20,
+  marginRight = 20,
+  marginBottom = 40, // Increased marginBottom to accommodate labels
+  marginLeft = 40, // Increased marginLeft to accommodate labels
+}: propType) {
+  const [tooltipData, setTooltipData] = useState<{
+    x: number;
+    y: number;
+    value: number;
+  } | null>(null);
+
+  const x = d3
+    .scaleLinear()
+    .domain([0, data.length - 1])
+    .range([marginLeft, width - marginRight]);
+  const y = d3
+    .scaleLinear()
+    .domain((d3.extent(data) as unknown) as [number, number])
+    .range([height - marginBottom, marginTop]);
+  const line = d3.line<number>().x((d, i) => x(i)).y(y);
+
+  const handleMouseOver = (xValue: number, yValue: number, value: number) => {
+    setTooltipData({ x: xValue, y: yValue, value: value });
+  };
+
+  const handleMouseOut = () => {
+    setTooltipData(null);
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      {tooltipData && (
+        <div
+          className="tooltip shadow-lg bg-white dark:bg-gray-800 dark:text-white"
+          style={{
+            position: 'absolute',
+            left: tooltipData.x,
+            top: tooltipData.y - 60, // Adjust this value to position the tooltip properly
+            padding: 10,
+            borderRadius: 10
+          }}
+        >
+          {tooltipData.value}
+        </div>
+      )}
+      <svg width={width} height={height}>
+        {/* Line */}
+        <path fill="none" stroke="currentColor" strokeWidth="1.5" d={line(data) || ''} />
+
+        {/* Labels */}
+        <g fill="currentColor" fontSize="12" textAnchor="middle">
+          {/* Horizontal labels */}
+          {horizontalLabels.map((d, i) => (
+            <text key={`label-x-${i}`} x={x(i) || 0} y={height - marginBottom + 20}>
+              {d}
+            </text>
+          ))}
+
+          {/* Vertical labels */}
+          {y.ticks().map((tick) => (
+            <text key={`label-y-${tick}`} x={marginLeft - 10} y={y(tick) || 0}>
+              {tick}
+            </text>
+          ))}
+        </g>
+
+        {/* Data points */}
+        <g fill="white" stroke="currentColor" strokeWidth="1.5">
+          {data.map((d, i) => (
+            <circle
+              key={i}
+              cx={x(i) || 0}
+              cy={y(d) || 0}
+              className={`${styles.circle}`}
+              onMouseOver={() => handleMouseOver(x(i) || 0, y(d) || 0, d)}
+              onMouseOut={handleMouseOut}
+              style={{ cursor: 'pointer' }}
+            />
+          ))}
+        </g>
+      </svg>
+    </div>
+  );
+}

@@ -1,0 +1,9 @@
+.circle {
+    r: 4; /* Initial radius */
+    transition: r 0.3s; /* Smooth transition effect */
+    &:hover {
+      r: 6; /* New radius when hovered */
+      stroke-width: 3;
+    }
+}
+  
