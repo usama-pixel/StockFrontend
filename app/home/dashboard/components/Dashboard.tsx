@@ -27,7 +27,7 @@ function Dashboard() {
         }
     }, [toggle])
   return (
-    <div className="p-4 xl:ml-64 w-full bg-primary" style={{width: '83%'}}>
+    <div className="p-4 bg-primary" style={{width: '100%'}}>
         <div className='grid grid-cols-3 gap-5'>
             <Card title='Sales' body='2020010' />
             <Card title='Revenue' body='30100000' />
@@ -46,7 +46,6 @@ function Dashboard() {
         </div>
         <div className='bg-amber-50 rounded-xl mt-5'>
             <LineChart data={data} horizontalLabels={hLine} width={1200} />
-
         </div>
     </div>
   )

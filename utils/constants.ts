@@ -58,7 +58,7 @@ export const monthlyData = [
     99,
     110,
     90,
-    2500,
+    250,
 ]
 
 export const dailyData = [

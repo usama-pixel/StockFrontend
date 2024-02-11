@@ -4,3 +4,8 @@ export enum alertTypes  {
     warning = 'alert warning',
     error = 'alert error',
 }
+
+export enum status {
+    sent,
+    recieved
+}

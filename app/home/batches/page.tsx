@@ -3,9 +3,9 @@ import Batches from './Batches'
 
 function page() {
   return (
-    <div>
+    <>
         <Batches />
-    </div>
+    </>
   )
 }
 

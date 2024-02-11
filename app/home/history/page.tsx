@@ -1,10 +1,10 @@
 import React from 'react'
-import Dashboard from './components/Dashboard'
+import History from './components/History'
 
 function page() {
   return (
     <>
-      <Dashboard />
+      <History />
     </>
   )
 }

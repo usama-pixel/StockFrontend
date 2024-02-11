@@ -7,11 +7,13 @@ function layout({
     children: React.ReactNode;
   }>) {
   return (
-    <div className="flex flex-row justify-between">
+    <div className="grid grid-cols-6">
+      <div className='bg-green-500 col-span-1'>
         <SideNavigation />
-        <div style={{width: '100%'}}>
-          {children}
-        </div>
+      </div>
+      <div className='col-span-5'>
+        {children}
+      </div>
     </div>
   )
 }

@@ -1,8 +1,9 @@
+'use client'
 import ListItem from '@/app/common/ListItem'
-import React from 'react'
+import React, { useState } from 'react'
 
 function Batches() {
-    const items = [
+    const [items, setItems] = useState([
         {
             batch_no: '1',
             product_name: 'Brufan',
@@ -17,16 +18,16 @@ function Batches() {
             expiry: '10-10-2024',
             quanity: 20
         }
-    ]
+    ])
   return (
-    <div className='pt-5' style={{width: '80%', marginLeft: 'auto', marginRight: '20px'}}>
-        {/* <div className='flex flex-row justify-between'> */}
-        <div className='grid grid-cols-5'>
-            <p className='pr-1'>Batch No</p>
-            <p className='pr-1'>Product Name</p>
-            <p className='pr-1'>Packing</p>
-            <p className='pr-1'>Expiry</p>
-            <p className='pr-1'>Quantity</p>
+    <div className='p-4'>
+        <div className='grid grid-cols-6 mb-3'>
+            <p className='pr-1 text-center'>Batch No</p>
+            <p className='pr-1 text-center'>Product Name</p>
+            <p className='pr-1 text-center'>Packing</p>
+            <p className='pr-1 text-center'>Expiry</p>
+            <p className='pr-1 text-center'>Quantity</p>
+            <p className='pr-1 text-center'>Actions</p>
         </div>
         <div className='flex flex-col'>
             {items.map(itm => (
@@ -37,6 +38,10 @@ function Batches() {
                     product_name={itm.product_name}
                     quanity={itm.quanity}
                     key={itm.batch_no}
+                    onDelete={() => setItems(
+                        items.filter(i => i.batch_no !== itm.batch_no)
+                    )}
+                    onEdit={() => {}}
                 />
             ))}
         </div>

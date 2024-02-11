@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './styles/line-chart.module.scss';
 import * as d3 from 'd3';
 
@@ -15,23 +15,23 @@ type propType = {
   marginLeft?: number;
 };
 
-export default function LineChart({
-  data,
-  horizontalLabels,
-  verticalLabels,
-  width = 640,
-  height = 400,
-  marginTop = 20,
-  marginRight = 20,
-  marginBottom = 40, // Increased marginBottom to accommodate labels
-  marginLeft = 40, // Increased marginLeft to accommodate labels
-}: propType) {
+function LineChart({
+    data,
+    horizontalLabels,
+    verticalLabels,
+    width = 640,
+    height = 400,
+    marginTop = 20,
+    marginRight = 20,
+    marginBottom = 40, 
+    marginLeft = 40,
+  }: propType) {
+  const svgRef = useRef(null);
   const [tooltipData, setTooltipData] = useState<{
     x: number;
     y: number;
     value: number;
-  } | null>(null);
-
+  } | null>(null)
   const x = d3
     .scaleLinear()
     .domain([0, data.length - 1])
@@ -39,7 +39,7 @@ export default function LineChart({
   const y = d3
     .scaleLinear()
     .domain((d3.extent(data) as unknown) as [number, number])
-    .range([height - marginBottom, marginTop]);
+    .range([height - marginBottom, marginTop])
   const line = d3.line<number>().x((d, i) => x(i)).y(y);
 
   const handleMouseOver = (xValue: number, yValue: number, value: number) => {
@@ -50,15 +50,55 @@ export default function LineChart({
     setTooltipData(null);
   };
 
+  useEffect(() => {
+    const svg = d3
+      .select(svgRef.current)
+      .attr('width', width)
+      .attr('height', height);
+  
+    // Create the <path> element if it doesn't exist
+    const p = d3.select('.path')
+    if(p.node() === null) {
+      console.log('oto')
+      svg.append('path')
+      .attr('fill', 'none')
+      .attr('class', 'path')
+    }
+    svg.select(".path")
+      .datum(data)
+      .join("path")
+      .attr("fill", "none")
+      .attr("stroke", "currentColor")
+      .attr("stroke-width", 1.5)
+      .transition()
+      .duration(2000)
+      .attr("d", line)
+    // svg.append('g')
+    // .attr('fill', 'white')
+    // .attr('stroke-width', 1.5)
+    // .attr('stroke', 'currentColor')
+    // .attr('class', 'datapoint')
+
+    // data.map((d, i) => {
+    //   svg.select('.datapoint')
+    //   .append('circle')
+    //   .attr('cx', x(i)||0)
+    //   .attr('cy', y(i)||0)
+    //   .attr('class', styles.circle)
+    //   .attr('on-mouse-over', () => handleMouseOver(x(i)||0, y(d)||0))
+      
+    // })
+  }, [data, height, line, width]);
+
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       {tooltipData && (
         <div
           className="tooltip shadow-lg bg-white dark:bg-gray-800 dark:text-white"
           style={{
             position: 'absolute',
-            left: tooltipData.x,
-            top: tooltipData.y - 60, // Adjust this value to position the tooltip properly
+            left: tooltipData.x + 250,
+            top: tooltipData.y + 140, // Adjust this value to position the tooltip properly
             padding: 10,
             borderRadius: 10
           }}
@@ -66,29 +106,23 @@ export default function LineChart({
           {tooltipData.value}
         </div>
       )}
-      <svg width={width} height={height}>
-        {/* Line */}
-        <path fill="none" stroke="currentColor" strokeWidth="1.5" d={line(data) || ''} />
+      <svg ref={svgRef}>
+         <g fill="currentColor" fontSize="12" textAnchor="middle">
+           {/* Horizontal labels */}
+           {horizontalLabels.map((d, i) => (
+             <text key={`label-x-${i}`} x={x(i) || 0} y={height - marginBottom + 20}>
+               {d}
+             </text>
+           ))}
 
-        {/* Labels */}
-        <g fill="currentColor" fontSize="12" textAnchor="middle">
-          {/* Horizontal labels */}
-          {horizontalLabels.map((d, i) => (
-            <text key={`label-x-${i}`} x={x(i) || 0} y={height - marginBottom + 20}>
-              {d}
-            </text>
-          ))}
-
-          {/* Vertical labels */}
-          {y.ticks().map((tick) => (
-            <text key={`label-y-${tick}`} x={marginLeft - 10} y={y(tick) || 0}>
-              {tick}
-            </text>
-          ))}
-        </g>
-
-        {/* Data points */}
-        <g fill="white" stroke="currentColor" strokeWidth="1.5">
+           {/* Vertical labels */}
+           {y.ticks().map((tick) => (
+             <text key={`label-y-${tick}`} x={marginLeft - 10} y={y(tick) || 0}>
+               {tick}
+             </text>
+           ))}
+         </g>
+         <g fill="currentColor" stroke="currentColor" strokeWidth="3">
           {data.map((d, i) => (
             <circle
               key={i}
@@ -103,5 +137,118 @@ export default function LineChart({
         </g>
       </svg>
     </div>
-  );
+  )
 }
+
+export default LineChart
+
+
+
+// 'use client'
+// import React, { useRef, useState } from 'react';
+// import styles from './styles/line-chart.module.scss';
+// import * as d3 from 'd3';
+
+// type propType = {
+//   data: number[];
+//   horizontalLabels: string[];
+//   verticalLabels?: string[];
+//   width?: number;
+//   height?: number;
+//   marginTop?: number;
+//   marginRight?: number;
+//   marginBottom?: number;
+//   marginLeft?: number;
+// };
+
+// export default function LineChart({
+//   data,
+//   horizontalLabels,
+//   verticalLabels,
+//   width = 640,
+//   height = 400,
+//   marginTop = 20,
+//   marginRight = 20,
+//   marginBottom = 40, // Increased marginBottom to accommodate labels
+//   marginLeft = 40, // Increased marginLeft to accommodate labels
+// }: propType) {
+//   const svgRef = useRef(null)
+//   const [tooltipData, setTooltipData] = useState<{
+//     x: number;
+//     y: number;
+//     value: number;
+//   } | null>(null);
+//   console.log(d3.select('svg'))
+//   const x = d3
+//     .scaleLinear()
+//     .domain([0, data.length - 1])
+//     .range([marginLeft, width - marginRight]);
+//   const y = d3
+//     .scaleLinear()
+//     .domain((d3.extent(data) as unknown) as [number, number])
+//     .range([height - marginBottom, marginTop])
+//   const line = d3.line<number>().x((d, i) => x(i)).y(y);
+
+//   const handleMouseOver = (xValue: number, yValue: number, value: number) => {
+//     setTooltipData({ x: xValue, y: yValue, value: value });
+//   };
+
+//   const handleMouseOut = () => {
+//     setTooltipData(null);
+//   };
+
+//   return (
+//     <div style={{ position: 'relative' }}>
+//       {tooltipData && (
+//         <div
+//           className="tooltip shadow-lg bg-white dark:bg-gray-800 dark:text-white"
+//           style={{
+//             position: 'absolute',
+//             left: tooltipData.x,
+//             top: tooltipData.y - 60, // Adjust this value to position the tooltip properly
+//             padding: 10,
+//             borderRadius: 10
+//           }}
+//         >
+//           {tooltipData.value}
+//         </div>
+//       )}
+//       <svg ref={svgRef} width={width} height={height}>
+//         {/* Line */}
+//         <path fill="none" stroke="currentColor" strokeWidth="1.5" d={line(data) || ''} />
+
+//         {/* Labels */}
+//         <g fill="currentColor" fontSize="12" textAnchor="middle">
+//           {/* Horizontal labels */}
+//           {horizontalLabels.map((d, i) => (
+//             <text key={`label-x-${i}`} x={x(i) || 0} y={height - marginBottom + 20}>
+//               {d}
+//             </text>
+//           ))}
+
+//           {/* Vertical labels */}
+//           {y.ticks().map((tick) => (
+//             <text key={`label-y-${tick}`} x={marginLeft - 10} y={y(tick) || 0}>
+//               {tick}
+//             </text>
+//           ))}
+//         </g>
+
+//         {/* Data points */}
+//         <g fill="white" stroke="currentColor" strokeWidth="1.5">
+//           {data.map((d, i) => (
+//             <circle
+//               key={i}
+//               cx={x(i) || 0}
+//               cy={y(d) || 0}
+//               className={`${styles.circle}`}
+//               onMouseOver={() => handleMouseOver(x(i) || 0, y(d) || 0, d)}
+//               onMouseOut={handleMouseOut}
+//               style={{ cursor: 'pointer' }}
+//             />
+//           ))}
+//         </g>
+//       </svg>
+//     </div>
+//   );
+// }
