@@ -11,15 +11,18 @@ type PropType = {
 }
 
 function MySelector({ options, defaultOp, handleChange }: PropType) {
+  console.log({defaultOp: options[defaultOp]})
   return (
-    <select onChange={handleChange} className="select select-accent w-full max-w-xs">
+    <select value={defaultOp} onChange={handleChange} className="select select-accent w-full max-w-xs">
         {
-          Object.entries(options).map((objArr: any[]) => (
+          Object.entries(options).map((objArr: any[], i: number) => {
+            return (
             <option
+              key={i}
               value={objArr[0]}
-              selected={defaultOp.toString() === objArr[1].toString()}
             >{objArr[1]}</option>
-          ))
+            )
+          })
         }
     </select>
   )

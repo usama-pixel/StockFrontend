@@ -6,6 +6,7 @@ export enum alertTypes  {
 }
 
 export enum status {
-    sent,
-    recieved
+    sent='Sent',
+    recieved='Recieved',
+    returned='Returned'
 }
