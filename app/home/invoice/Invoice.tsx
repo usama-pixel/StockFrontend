@@ -32,16 +32,12 @@ function Invoice() {
   const [currentPage, setCurrentPage] = useState(0)
   const [limit, setLimit] = useState(rowsPerPage)
   const [total, setTotal] = useState(2)
-  console.log({ll: total})
+  const [srchVal, setSrchVal] = useState('')
   useEffect(() => {
     getData()
-  }, [currentPage])
+  }, [currentPage, srchVal])
   const handlePageChange = (i:number) => {
     setCurrentPage(i)
-  }
-  const [srchVal, setSrchVal] = useState('')
-  const handleSearch = () => {
-    getData()
   }
   const getData = () => {
     axios.get(`/invoice?page=${currentPage}&limit=${limit}&search=${srchVal}`)
@@ -323,7 +319,7 @@ function Invoice() {
           limit={limit}
           srchVal={srchVal}
           setSrchVal={setSrchVal}
-          handleSearch={handleSearch}
+          // handleSearch={handleSearch}
         />
         {toast.show && <Toast message={toast.msg} type={toast.type} />}
         <Modal setData={setData} Body={ModalBody} />

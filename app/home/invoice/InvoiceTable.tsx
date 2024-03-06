@@ -26,7 +26,6 @@ type PropType = {
     limit: number
     srchVal: string
     setSrchVal: React.Dispatch<React.SetStateAction<string>>
-    handleSearch: ()=>void
 }
 
 function InvoiceTable({
@@ -38,7 +37,6 @@ function InvoiceTable({
     limit,
     srchVal,
     setSrchVal,
-    handleSearch
 }: PropType) {
     const handleGenerateInvoice = () => {
         const modalElement = document.getElementById('my_modal_3') as HTMLDialogElement;
@@ -137,7 +135,6 @@ function InvoiceTable({
         <div className='flex flex-row mb-5 justify-between'>
             <div className='gap-2 flex flex-row'>
                 <input className='input bg-primary text-white placeholder:text-gray-700' placeholder='Search' value={srchVal} onChange={e => setSrchVal(e.target.value)} />
-                <button className='btn btn-primary' onClick={handleSearch}>Search</button>
             </div>
             <button className='btn btn-primary' onClick={handleGenerateInvoice}>Generate Invoice</button>
         </div>

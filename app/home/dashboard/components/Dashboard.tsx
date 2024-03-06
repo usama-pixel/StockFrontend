@@ -6,10 +6,11 @@ import React, { BaseSyntheticEvent, SyntheticEvent, useEffect, useState } from '
 import axios from '@/utils/axiosConfig'
 import DatePicker from '@/app/common/MySelector'
 import MySelector from '@/app/common/MySelector'
+import { getDate, parseISO } from 'date-fns'
 
 function Dashboard() {
-    const baseDate = 2022
-    const [data, setData] = useState(monthlyData)
+    const base_year = 2022
+    const [data, setData] = useState([])
     const [hLine, setHLine] = useState(Object.values(short_months))
     enum mode {
         Monthly,
@@ -19,6 +20,10 @@ function Dashboard() {
     const [rev, setRev] = useState('-')
     const [sales, setSales] = useState('-')
     const [toggle, setToggle] = useState<mode>(mode.Monthly)
+    useEffect(() => {
+        console.log({TGselectedYear: selectedYear})
+        console.log({toggle})
+    }, [toggle])
     const [dataMode, setDataMode] = useState('Monthly')
     let years:any = {}
     for(let i = 0; i < 28; i++) {years[i+""]=(i+2022)}
@@ -28,12 +33,30 @@ function Dashboard() {
     const getData = async () => {
         // const p1 = axios.get('/tax')
         // const p2 = axios.get('/revenue')
-        const d = await axios.get(`/tax?monthIndex=${selectedMonth}&year=${selectedYear+baseDate}`)
-        const s = await axios.get(`/sales?monthIndex=${selectedMonth}&year=${selectedYear+baseDate}`)
-        const r = await axios.get(`/revenue?monthIndex=${selectedMonth}&year=${selectedYear+baseDate}`)
+        console.log({myMan: +selectedYear})
+        const d = await axios.get(`/tax?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+        const s = await axios.get(`/sales?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+        const r = await axios.get(`/revenue?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+        // console.log({selectedYearBro: selectedYear})
+        const p4 = await axios.get(`/datapoints?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
         setTax(d.data)
         setSales(s.data)
         setRev(r.data)
+        console.log({p4: p4.data})
+        let revisedHline
+        if(toggle == mode.Monthly)
+            revisedHline = p4.data.map(({ date }: {date: string}) => date?.split('-')[2])
+        else
+            revisedHline = (p4.data.map(({ date }: {date: string}) => +date?.split('-')[1]))?.map((m: number) => short_months[m] as string)
+        console.log({revisedHline})
+        setHLine(revisedHline)
+        const revised_d = p4.data.map((dd: any) => {
+            // const dateObject = parseISO(dd?.date);
+            // const dayOfMonth = getDate(dd);
+            return dd.sum
+        })
+        setData(revised_d)
+        // console.log('p4',p4.data)
         // Promise.
     }
     useEffect(() => {
@@ -41,24 +64,24 @@ function Dashboard() {
         getData()
         if(toggle === mode.Monthly) {
             setDataMode('Monthly')
-            setHLine(days)
-            setData(dailyData)
+            // setHLine(days)
+            // setData(dailyData)
         }
         else {
             setDataMode('Yearly')
-            setHLine(Object.values(short_months))
-            setData(monthlyData)
+            // setHLine(Object.values(short_months))
+            // setData(monthlyData)
         }
     }, [toggle, selectedMonth, selectedYear])
     
     const handleMonthChange = (e: BaseSyntheticEvent) => {
-        console.log(e.target.value)
         setSelectedMonth(e.target.value)
     }
+
     const handleYearChange = (e: BaseSyntheticEvent) => {
-        const selectedYearValue = (+e.target.value) ;
-        setSelectedYear(selectedYearValue);
+        setSelectedYear(+e.target.value+base_year)
     }
+    // console.log({selectedYearBefore: selectedYear})
   return (
     <div className="p-4 bg-primary" style={{width: '100%'}}>
         <div className='grid grid-cols-3 gap-5'>
@@ -68,10 +91,10 @@ function Dashboard() {
         </div>
         <div className='flex flex-row mt-5'>
             <div className='flex flex-row gap-2'>
-                <MySelector options={years} defaultOp={2} handleChange={handleYearChange} />
+                <MySelector options={years} value={selectedYear-2022} handleChange={handleYearChange} />
                 {
                     dataMode === 'Monthly' &&
-                    <MySelector options={long_months} defaultOp={selectedMonth} handleChange={handleMonthChange} />
+                    <MySelector options={long_months} value={selectedMonth} handleChange={handleMonthChange} />
                 }
             </div>
             <div className='mt-5 flex gap-2 ml-auto w-fit'>

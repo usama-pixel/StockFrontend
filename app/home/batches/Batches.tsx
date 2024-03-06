@@ -37,7 +37,7 @@ function Batches() {
     const pageSizeOptions = [3, 4, 100]
     // const [pageNumber, setPageNumber] = useState(0)
     const [limit, setLimit] = useState(rowsPerPage)
-    const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState(rowsPerPage)
     const [currentPage, setCurrentPage] = useState(0)
     const [srchVal, setSrchVal] = useState('')
     const [btnDisabled, setBtnDisabled] = useState(false)
@@ -45,9 +45,6 @@ function Batches() {
     const [sendDisable, setSendDisable] = useState(false)
     // const [batch_id, setBatch_id] = useState('')
     const [batchId, setBatchId] = useState<string>()
-    const handleSearch = () => {
-        getData()
-    }
     const getData = () => {
     axios.get(`/batch?page=${currentPage}&limit=${limit}&search=${srchVal}`)
     .then(res => {
@@ -72,9 +69,9 @@ function Batches() {
     }
     useEffect(() => {
         getData()
-    }, [currentPage, limit])
-    const convertDate = (dateString: string): string | void => {
-        if(!dateString) return
+    }, [currentPage, limit, srchVal])
+    const convertDate = (dateString: string): string => {
+        if(!dateString) return ''
         const parsedDate = parseISO(dateString);
         const formattedDate = format(parsedDate, 'MMM-dd-yyyy');
         return formattedDate;
@@ -90,7 +87,6 @@ function Batches() {
                 if(res.status === 200) {
                     setToast(prev => ({...prev, show: true, msg: 'Batch Added Sucessfully'}))
                     const modalElement = document.getElementById('my_modal_3') as HTMLDialogElement;
-                    console.log(res.data)
                     setData(prev => ([{...res.data, status: res.data?.Status?.name === 'recieved' ? 'Recieved': 'Returned'}, ...prev]))
                     if (modalElement !== null) {
                         modalElement.close();
@@ -118,11 +114,11 @@ function Batches() {
                 initialValues={{
                     "product_name": "",
                     "packing": "",
-                    "quantity": null,
-                    "rate": null,
+                    "quantity": 0,
+                    "rate": 0,
                     "expiry_date": "",
-                    "discount": null,
-                    "tax": null,
+                    "discount": 0,
+                    "tax": 0,
                 }}
                 validate={values => {
                     // console.log({values})
@@ -142,16 +138,11 @@ function Batches() {
                     return errors;
                 }}
                 onSubmit={(values, { setSubmitting }) => {
-                    values.rate = (+values.rate).toFixed(2)
-                    values.discount = (+values.discount).toFixed(2)
-                    values.tax = (+values.tax).toFixed(2)
-                    console.log({valuesYY: values})
-                    // return;
+                    values.rate = +(+values.rate).toFixed(2)
+                    values.discount = +(+values.discount).toFixed(2)
+                    values.tax = +(+values.tax).toFixed(2)
                     handleAdd(values)
-                    // setTimeout(() => {
-                    // alert(JSON.stringify(values, null, 2));
                     setSubmitting(false);
-                    // }, 400);
                 }}
                 >
                 {({ isSubmitting }) => (
@@ -267,7 +258,7 @@ function Batches() {
     const handleEdit = (id: string) => {
         setBatchId(id)
         const d = data.find(d => d.id === id)
-        setEditData((prev: any): void => ({
+        setEditData((prev: any): any => ({
             discount: d?.discount,
             expiry_date: d?.expiry_date,
             packing: d?.packing,
@@ -285,8 +276,6 @@ function Batches() {
     const handleSaveEdit = () => {
         setBtnDisabled(true)
         const revised_data = {...editData, id: batchId, }
-        // console.log({revised_data})
-        // return
         axios.put('/batch', {
             ...revised_data
         })
@@ -301,12 +290,12 @@ function Batches() {
                     ...prev,
                     show: false,
                 }))
-                setBtnDisabled(false)
-                const modalElement = document.getElementById('edit_modal') as HTMLDialogElement;
-                if (modalElement !== null) {
-                    modalElement.close();
-                }
             }, 5000)
+            const modalElement = document.getElementById('edit_modal') as HTMLDialogElement;
+            if (modalElement !== null) {
+                modalElement.close();
+            }
+            setBtnDisabled(false)
             setData((prev: any[]) => {
                 const revised_d = prev.map((d: any) => {
                     if(d.id === batchId) {
@@ -382,14 +371,14 @@ function Batches() {
                                 className='input input-bordered'
                                 type='number'
                                 value={editData.quantity}
-                                onChange={e => setEditData(prev => ({...prev, quantity: e.target.value}))}
+                                onChange={e => setEditData((prev: any) => ({...prev, quantity: e.target.value}))}
                             />
                         </label>
                         <label className='form-control w-full max-w-xs'>
                             <div className='label'>
                                 <span className='label-text-alt'>Status</span>
                             </div>
-                            <select className='select select-bordered w-full max-w-xs' onChange={(e) => setEditData(prev => ({...prev, status: e.target.value}))}>
+                            <select className='select select-bordered w-full max-w-xs' onChange={(e) => setEditData((prev: any) => ({...prev, status: e.target.value}))}>
                                 <option selected={editData.status === status.recieved}>Recieved</option>
                                 {/* <option selected={editData.status === status.sent}>Sent</option> */}
                                 <option selected={editData.status === status.returned}>Returned</option>
@@ -404,7 +393,7 @@ function Batches() {
                                 className='input input-bordered'
                                 type='number'
                                 value={editData.rate}
-                                onChange={e => setEditData(prev => ({...prev, rate: e.target.value}))}
+                                onChange={e => setEditData((prev: any) => ({...prev, rate: e.target.value}))}
                             />
                         </label>
                         <label className='form-control w-full max-w-xs'>
@@ -416,7 +405,7 @@ function Batches() {
                                 className='input input-bordered'
                                 type='number'
                                 value={editData.tax}
-                                onChange={e => setEditData(prev => ({...prev, tax: e.target.value}))}
+                                onChange={e => setEditData((prev: any) => ({...prev, tax: e.target.value}))}
                             />
                         </label>
                         <label className='form-control w-full max-w-xs'>
@@ -428,7 +417,7 @@ function Batches() {
                                 className='input input-bordered'
                                 type='number'
                                 value={editData.discount}
-                                onChange={e => setEditData(prev => ({...prev, discount: e.target.value}))}
+                                onChange={e => setEditData((prev: any) => ({...prev, discount: e.target.value}))}
                             />
                         </label>
                         <label className='form-control w-full max-w-xs'>
@@ -440,7 +429,7 @@ function Batches() {
                                 className='input input-bordered'
                                 type='date'
                                 value={convertEditDate(editData.expiry_date)}
-                                onChange={e => setEditData(prev => ({...prev, expiry_date: e.target.value}))}
+                                onChange={e => setEditData((prev: any) => ({...prev, expiry_date: e.target.value}))}
                             />
                         </label>
                         <label className='form-control w-full max-w-xs'>
@@ -452,7 +441,7 @@ function Batches() {
                                 className='input input-bordered'
                                 type='text'
                                 value={editData.packing}
-                                onChange={e => setEditData(prev => ({...prev, packing: e.target.value}))}
+                                onChange={e => setEditData((prev: any) => ({...prev, packing: e.target.value}))}
                             />
                         </label>
                     </div>
@@ -501,7 +490,6 @@ function Batches() {
             <div className='flex flex-row mb-5 justify-between'>
                 <div className='gap-2 flex flex-row'>
                     <input className='input bg-primary text-white placeholder:text-gray-700' placeholder='Search' value={srchVal} onChange={e => setSrchVal(e.target.value)} />
-                    <button className='btn btn-primary' onClick={handleSearch}>Search</button>
                 </div>
                 <button className='btn btn-primary' onClick={handleAddBatch}>Add Batch</button>
             </div>

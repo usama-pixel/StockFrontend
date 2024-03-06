@@ -1,4 +1,8 @@
-export const short_months = {
+export interface ShortMonths {
+    [key: number]: string;
+}
+
+export const short_months: ShortMonths = {
     0: 'Jan',
     1: 'Feb',
     2: 'Mar',

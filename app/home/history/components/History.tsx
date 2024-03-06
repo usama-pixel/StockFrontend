@@ -1,13 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import axios from '@/utils/axiosConfig';
-import MyDataGrid from './MyDataGrid'
-import { status } from '@/utils/enums'
-import ReactPaginate from 'react-paginate'
-import Pagination from '@/app/common/Pagination'
-import TanStackTable from '@/app/common/TanStackTable/TanStackTable';
 import MyTable from '@/app/common/MyTable';
-import Modal from '@/app/common/Modal';
 import { rowsPerPage } from '@/utils/constants';
 
 function History() {
@@ -30,26 +24,13 @@ function History() {
     },
   ]
   const [data, setData] = useState([])
-  const [totalPage, setTotalPage] = useState(9)
   const [currentPage, setCurrentPage] = useState(0)
   const [limit, setLimit] = useState(rowsPerPage)
   const [total, setTotal] = useState(0)
+  const [srchVal, setSrchVal] = useState('')
   useEffect(() => {
     getData()
-  }, [currentPage])
-  const handlePageChange = (i:number) => {
-    console.log('clicked', i)
-    setCurrentPage(i)
-  }
-  const [srchVal, setSrchVal] = useState('')
-  const handleSearch = () => {
-    // console.log({srchVal})
-    getData()
-    // axios.get(`/batch-sent?page=${currentPage}&limit=${limit}`)
-    // .then(res => {
-
-    // })
-  }
+  }, [currentPage, srchVal])
   const getData = () => {
     axios.get(`/batch-sent?page=${currentPage}&limit=${limit}&search=${srchVal}`)
     .then(res => {
@@ -72,26 +53,8 @@ function History() {
           limit={limit}
           srchVal={srchVal}
           setSrchVal={setSrchVal}
-          handleSearch={handleSearch}
         />
-        <Modal Body={() => <h1>Yo</h1>} />
-        {/* <TanStackTable /> */}
-        {/* {data.map((itm: any) => (
-          <div className='flex flex-row gap-2 bg-accent'>
-            <p>{itm?.to}</p>
-            <p>{itm?.product_name}</p>
-            <p>{itm?.discount}</p>
-            <p>{itm?.expiry_date}</p>
-            <p>{itm?.rate}</p>
-            <p>{itm?.tax}</p>
-            <p>{itm?.quantity}</p>
-          </div>
-        ))} */}
       </div>
-      {/* <Table data={data} /> */}
-      {/* <div className='mt-8 ml-auto mr-auto w-fit'>
-        <Pagination currentPage={currentPage} handlePageChange={handlePageChange} totalPages={totalPage} />
-      </div> */}
     </div>
   )
 }
