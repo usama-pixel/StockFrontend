@@ -37,7 +37,7 @@ function LineChart({
     .scaleLinear()
     .domain([0, data.length - 1])
     .range([marginLeft, width - marginRight]);
-  let y 
+  let y: d3.ScaleLinear<number, number, never>
   const total = data.reduce((t: number, n: number) => t+n)
   if(total === 0) {
     y = d3
