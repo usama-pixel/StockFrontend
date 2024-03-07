@@ -319,27 +319,10 @@ function Invoice() {
           limit={limit}
           srchVal={srchVal}
           setSrchVal={setSrchVal}
-          // handleSearch={handleSearch}
         />
         {toast.show && <Toast message={toast.msg} type={toast.type} />}
         <Modal setData={setData} Body={ModalBody} />
-        {/* <TanStackTable /> */}
-        {/* {data.map((itm: any) => (
-          <div className='flex flex-row gap-2 bg-accent'>
-            <p>{itm?.to}</p>
-            <p>{itm?.product_name}</p>
-            <p>{itm?.discount}</p>
-            <p>{itm?.expiry_date}</p>
-            <p>{itm?.rate}</p>
-            <p>{itm?.tax}</p>
-            <p>{itm?.quantity}</p>
-          </div>
-        ))} */}
       </div>
-      {/* <Table data={data} /> */}
-      {/* <div className='mt-8 ml-auto mr-auto w-fit'>
-        <Pagination currentPage={currentPage} handlePageChange={handlePageChange} totalPages={totalPage} />
-      </div> */}
     </div>
   )
 }

@@ -20,13 +20,16 @@ function Login() {
         }).then(res => {
             Cookie.set('token', res.data?.user?.token)
             router.push('/home')
-            console.log('hah:',res.data)
+            console.log('hah:', Cookie.get('token'))
         }).catch(err => {
             setShowToast(true);
             setTimeout(() => {setShowToast(false)}, 10000)
             setToastMsg(err?.response?.data?.message)
             console.log(err)
         })
+    }
+    const newAcc = () => {
+        router.push('/signup')
     }
   return (
     <div className='flex flex-col w-96 ml-auto mr-auto mt-52'>
@@ -42,11 +45,14 @@ function Login() {
             value={password}
             onChange={e => setPassword(e.target.value)}
         />
-        <button onClick={handleLogin} className="btn btn-primary">Login</button>
-        {
-            showToast &&
-            <Toast message={toastMsg} type={alertTypes.error} />
-        }
+        <div className='flex flex-col gap-6'>
+            <button onClick={handleLogin} className="btn btn-primary">Login</button>
+            {
+                showToast &&
+                <Toast message={toastMsg} type={alertTypes.error} />
+            }
+            <button className='btn btn-accent' onClick={() => newAcc()}>Create a Account</button>
+        </div>
     </div>
   )
 }

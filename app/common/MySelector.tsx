@@ -11,7 +11,7 @@ type PropType = {
 }
 
 function MySelector({ options, value, handleChange }: PropType) {
-  console.log({value})
+  // console.log({value})
   return (
     <select value={value} onChange={handleChange} className="select select-accent w-full max-w-xs">
       {

@@ -5,6 +5,7 @@ import Toast from '@/app/common/Toast';
 import { alertTypes } from '@/utils/enums';
 import Cookie from 'js-cookie'
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 function Signup() {
 //     "firstname": "usama",
@@ -62,11 +63,15 @@ function Signup() {
             value={password}
             onChange={e => setPassword(e.target.value)}
         />
-        <button onClick={handleLogin} className="btn btn-primary">Login</button>
-        {
-            showToast &&
-            <Toast message={toastMsg} type={alertTypes.error} />
-        }
+        <div className='flex flex-col gap-2'>
+            <button onClick={handleLogin} className="btn btn-primary">Login</button>
+            {
+                showToast &&
+                <Toast message={toastMsg} type={alertTypes.error} />
+            }
+            <p>Already Have an account? <Link className='text-accent' href={'/login'}>Login</Link></p>
+        </div>
+
     </div>
   )
 }

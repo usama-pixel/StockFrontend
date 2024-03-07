@@ -6,11 +6,11 @@ import React, { BaseSyntheticEvent, SyntheticEvent, useEffect, useState } from '
 import axios from '@/utils/axiosConfig'
 import DatePicker from '@/app/common/MySelector'
 import MySelector from '@/app/common/MySelector'
-import { getDate, parseISO } from 'date-fns'
+import { endOfMonth, getDate, parseISO } from 'date-fns'
 
 function Dashboard() {
     const base_year = 2022
-    const [data, setData] = useState([])
+    const [data, setData] = useState<number[]>()
     const [hLine, setHLine] = useState(Object.values(short_months))
     enum mode {
         Monthly,
@@ -21,42 +21,81 @@ function Dashboard() {
     const [sales, setSales] = useState('-')
     const [toggle, setToggle] = useState<mode>(mode.Monthly)
     useEffect(() => {
-        console.log({TGselectedYear: selectedYear})
-        console.log({toggle})
+        if(!data) return;
+        console.log({selectedYear})
+        if(toggle === mode.Yearly) {
+            setHLine(Object.values(short_months))
+            for(let i = data.length; i < Object.values(short_months).length; i++) {
+                console.log('jessy',Object.values(short_months)[i])
+            }
+        }
     }, [toggle])
     const [dataMode, setDataMode] = useState('Monthly')
     let years:any = {}
     for(let i = 0; i < 28; i++) {years[i+""]=(i+2022)}
     const [selectedYear, setSelectedYear] = useState((new Date).getFullYear())
     const [selectedMonth, setSelectedMonth] = useState<number>((new Date()).getMonth())
-
+console.log({hLine})
     const getData = async () => {
-        // const p1 = axios.get('/tax')
-        // const p2 = axios.get('/revenue')
-        console.log({myMan: +selectedYear})
         const d = await axios.get(`/tax?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
         const s = await axios.get(`/sales?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
         const r = await axios.get(`/revenue?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
-        // console.log({selectedYearBro: selectedYear})
         const p4 = await axios.get(`/datapoints?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
         setTax(d.data)
         setSales(s.data)
         setRev(r.data)
-        console.log({p4: p4.data})
-        let revisedHline
-        if(toggle == mode.Monthly)
-            revisedHline = p4.data.map(({ date }: {date: string}) => date?.split('-')[2])
-        else
-            revisedHline = (p4.data.map(({ date }: {date: string}) => +date?.split('-')[1]))?.map((m: number) => short_months[m] as string)
-        console.log({revisedHline})
-        setHLine(revisedHline)
-        const revised_d = p4.data.map((dd: any) => {
-            // const dateObject = parseISO(dd?.date);
-            // const dayOfMonth = getDate(dd);
-            return dd.sum
-        })
-        setData(revised_d)
-        // console.log('p4',p4.data)
+        if(toggle == mode.Monthly) {
+            const d: {[key: number]: number} = {}
+            console.log({aa: p4?.data})
+            p4?.data?.map(({sum, date}: {sum: number, date:string}) => {
+                console.log({sum, date})
+                const day = +date.split('-')[2]
+                if(!d[day])
+                    return d[day] = sum
+                return d[day] += sum
+            })
+            // if(!month || !year) throw new Error('month or year null')
+            const lastDay = endOfMonth(new Date(selectedYear, selectedMonth)).getDate()
+            console.log({typeOfLastDay: lastDay,})
+            const tempHline: number[] = []
+            for(let i = 1; i <= lastDay; i++) {
+                tempHline.push(i)
+            }
+            setHLine(tempHline)
+            console.log('should run', tempHline)
+            const temp: number[] = []
+            for(let i = 0; i < lastDay; i++) {
+                if(d[i]) {
+                    temp.push(d[i])
+                    continue;
+                }
+                temp.push(0)
+            }
+            setData(temp)
+        }
+        else if(toggle === mode.Yearly) {
+            const d: {[key: number]: number} = {}
+            p4.data.map(({sum, date}: { sum: number, date: string }, i: number) => {
+                const month = +date.split('-')[1]
+                if(!d[month])
+                    return d[month] = sum
+                return d[month] += sum
+            })
+            const temp: number[] = []
+            for(let i = 0; i < 12; i++) {
+                if(d[i]) {
+                    temp.push(d[i])
+                    continue
+                }
+                temp.push(0)
+            }
+            setData(temp)
+            for(let i = 0; i < 12; i++) {
+                if(i )
+                temp.push()
+            }
+            setHLine(Object.values(short_months))
+        }
         // Promise.
     }
     useEffect(() => {
@@ -64,13 +103,9 @@ function Dashboard() {
         getData()
         if(toggle === mode.Monthly) {
             setDataMode('Monthly')
-            // setHLine(days)
-            // setData(dailyData)
         }
         else {
             setDataMode('Yearly')
-            // setHLine(Object.values(short_months))
-            // setData(monthlyData)
         }
     }, [toggle, selectedMonth, selectedYear])
     
@@ -81,7 +116,6 @@ function Dashboard() {
     const handleYearChange = (e: BaseSyntheticEvent) => {
         setSelectedYear(+e.target.value+base_year)
     }
-    // console.log({selectedYearBefore: selectedYear})
   return (
     <div className="p-4 bg-primary" style={{width: '100%'}}>
         <div className='grid grid-cols-3 gap-5'>

@@ -36,7 +36,6 @@ function MyTable({
             <div className='gap-2 flex flex-row'>
                 <input className='input bg-primary text-white placeholder:text-gray-700' placeholder='Search' value={srchVal} onChange={e => setSrchVal(e.target.value)} />
             </div>
-            {/* <button className='btn btn-primary' onClick={handleGenerateInvoice}>Generate Invoice</button> */}
         </div>
         <div className='grid grid-cols-7'>
             <span className='col-span-1 p-2 font-bold'>Batch Id</span>

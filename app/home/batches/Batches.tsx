@@ -6,7 +6,6 @@ import axios from '@/utils/axiosConfig'
 import Modal from '@/app/common/Modal'
 import Toast from '@/app/common/Toast'
 import { alertTypes, status } from '@/utils/enums'
-import MyDataGrid from '../history/components/MyDataGrid';
 import { BatchDataType } from '@/utils/types';
 import { rowsPerPage } from '@/utils/constants';
 import { AxiosResponse } from 'axios';
@@ -112,16 +111,15 @@ function Batches() {
             <>
             <Formik
                 initialValues={{
-                    "product_name": "",
-                    "packing": "",
-                    "quantity": 0,
-                    "rate": 0,
-                    "expiry_date": "",
-                    "discount": 0,
-                    "tax": 0,
+                    product_name: "",
+                    packing: "",
+                    quantity: "",
+                    rate: "",
+                    expiry_date: "",
+                    discount: "",
+                    tax: "",
                 }}
                 validate={values => {
-                    // console.log({values})
                     let errors = {};
                     if (!values.product_name) {
                         errors = {...errors, product_name: 'Required'}
@@ -138,9 +136,9 @@ function Batches() {
                     return errors;
                 }}
                 onSubmit={(values, { setSubmitting }) => {
-                    values.rate = +(+values.rate).toFixed(2)
-                    values.discount = +(+values.discount).toFixed(2)
-                    values.tax = +(+values.tax).toFixed(2)
+                    values.rate = (+values.rate).toFixed(2)
+                    values.discount = (+values.discount).toFixed(2)
+                    values.tax = (+values.tax).toFixed(2)
                     handleAdd(values)
                     setSubmitting(false);
                 }}
@@ -192,18 +190,15 @@ function Batches() {
             setTimeout(() => {
                 setToast(prev => ({...prev, show: false}))
                 setBtnDisabled(false)
-                handleCancel()
             }, 5000)
         })
         .catch(err => {
-            // setToast
             console.log(err)
             setToast(prev => ({...prev, show: true, msg: 'Some error occured while deleting'}))
             handleCancel()
             setTimeout(() => {
                 setToast(prev => ({...prev, show: false}))
                 setBtnDisabled(false)
-                handleCancel()
             }, 5000)
             setBtnDisabled(false)
         })
@@ -218,26 +213,43 @@ function Batches() {
     const handleSend2 = () => {
         setSendDisable(true)
         axios.post('/send-batch', {
-        to,
-        batchId
+            to,
+            batchId
         })
         .then(res => {
         if(res.status === 200) {
+            setToast({msg: 'Sent sucessfully', show: true, type: alertTypes.info})
             setData((prev: any) => {
                 const rev = data.filter((itm: any) => itm.id !== batchId)
                 return rev
             })
             const modalElement = document.getElementById('send_modal') as HTMLDialogElement;
             if (modalElement !== null) {
-            setTimeout(() => {
                 modalElement.close();
-                setTo('');
-                setSendDisable(false)
-            }, 3000)
             }
+            setTimeout(() => {
+                setToast(prev => ({...prev, show: false}))
+            }, 5000)
+            setTo('');
+            setSendDisable(false)
         }
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            setToast({
+                msg: "Some Error Occured while performing this action",
+                show: true,
+                type: alertTypes.error
+            })
+            setTimeout(() => {
+                setToast(prev => ({...prev, show: false}))
+            }, 5000)
+            const modalElement = document.getElementById('send_modal') as HTMLDialogElement;
+            if (modalElement !== null) {
+                modalElement.close();
+            }
+            setTo('');
+            setSendDisable(false)
+        })
     }
     const handleAddBatch = () => {
         const modalElement = document.getElementById('my_modal_3') as HTMLDialogElement;
@@ -300,17 +312,19 @@ function Batches() {
                 const revised_d = prev.map((d: any) => {
                     if(d.id === batchId) {
                         return {...revised_data}
-                        // console.log({Yooo: d})
-                        // console.log({revised_data})
                     } return d
                 })
                 return revised_d
             })
-            // console.log({alreadyPresent: data.find(r => r.id === batchId)})
         })
         .catch(err => {
+            const modalElement = document.getElementById('edit_modal') as HTMLDialogElement;
+            if (modalElement !== null) {
+                modalElement.close();
+            }
+            setBtnDisabled(false)
             setToast({
-                msg: 'Some error occured while saving',
+                msg: 'Some error occured while updating the data',
                 show: true,
                 type: alertTypes.error
             })
@@ -319,7 +333,6 @@ function Batches() {
                     ...prev,
                     show: false,
                 }))  
-                setBtnDisabled(false)
             }, 5000)
             console.log(err)
         })
@@ -328,9 +341,6 @@ function Batches() {
         if(!str) return
         const date = new Date(str);
         return format(date, 'yyyy-MM-dd');
-        // const initialDate = new Date(str);
-        // const date = initialDate?.toISOString()?.split('T')[0];
-        // return date
     }
   return (
     <div className="p-4" style={{width: '100%', marginLeft: 'auto', marginRight: 'auto'}}>
@@ -358,10 +368,6 @@ function Batches() {
                                 onChange={e => setEditData(prev => ({...prev, product_name: e.target.value}))}
                             />
                         </label>
-                        {/* <input
-                            type='date'
-                            onChange={e => console.log(e.target.value)}
-                        /> */}
                         <label className='form-control w-full max-w-xs'>
                             <div className='label'>
                                 <span className='label-text-alt'>Quantity</span>
