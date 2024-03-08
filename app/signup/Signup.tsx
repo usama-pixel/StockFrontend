@@ -64,7 +64,7 @@ function Signup() {
             onChange={e => setPassword(e.target.value)}
         />
         <div className='flex flex-col gap-2'>
-            <button onClick={handleLogin} className="btn btn-primary">Login</button>
+            <button onClick={handleLogin} className="btn btn-primary">Signup</button>
             {
                 showToast &&
                 <Toast message={toastMsg} type={alertTypes.error} />
