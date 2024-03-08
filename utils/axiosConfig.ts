@@ -5,7 +5,7 @@ const base_url = process.env.NEXT_PUBLIC_BASE_URL
 console.log({base_url})
 
 const instance = axios.create({
-    baseURL: 'https://stockbackend-production-eec1.up.railway.app'
+    baseURL: base_url
 })
 
 instance.interceptors.request.use(

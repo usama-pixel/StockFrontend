@@ -14,7 +14,7 @@ function Login() {
     const router = useRouter()
 
     const handleLogin = () => {
-        axios.post('login', {
+        axios.post('/login', {
             email,
             password
         }).then(res => {
