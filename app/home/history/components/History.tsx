@@ -1,12 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import Table from './Table'
-import { status } from '@/utils/enums'
-import ReactPaginate from 'react-paginate'
-import Pagination from '@/app/common/Pagination'
+import axios from '@/utils/axiosConfig';
+import MyTable from '@/app/common/MyTable';
+import { rowsPerPage } from '@/utils/constants';
 
 function History() {
-  const data = [
+  const d = [
     {
       id: 1,
       person: 'Ismael',
@@ -24,25 +23,38 @@ function History() {
       date: '10-09-2022'
     },
   ]
-  const [totalPage, setTotalPage] = useState(9)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [data, setData] = useState([])
+  const [currentPage, setCurrentPage] = useState(0)
+  const [limit, setLimit] = useState(rowsPerPage)
+  const [total, setTotal] = useState(0)
+  const [srchVal, setSrchVal] = useState('')
   useEffect(() => {
-  }, [])
-  const handlePageChange = (i:number) => {
-    console.log('clicked', i)
-    setCurrentPage(i)
+    getData()
+  }, [currentPage, srchVal])
+  const getData = () => {
+    axios.get(`/batch-sent?page=${currentPage}&limit=${limit}&search=${srchVal}`)
+    .then(res => {
+      console.log(res.data?.rows)
+      setData(res.data?.rows)
+      setTotal(res.data?.totalRows|0)
+    })
+    .catch(err => console.log(err))
   }
   // console.log({currentPage})
   return (
     <div className='p-4'>
       <h1>History</h1>
-      <div>
-        <Table data={data} />
+      <div className='flex flex-col gap-2'>
+        <MyTable
+          data={data}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          total={total}
+          limit={limit}
+          srchVal={srchVal}
+          setSrchVal={setSrchVal}
+        />
       </div>
-      {/* <Table data={data} /> */}
-      {/* <div className='mt-8 ml-auto mr-auto w-fit'>
-        <Pagination currentPage={currentPage} handlePageChange={handlePageChange} totalPages={totalPage} />
-      </div> */}
     </div>
   )
 }

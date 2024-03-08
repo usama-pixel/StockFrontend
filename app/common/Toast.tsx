@@ -8,7 +8,7 @@ type propType = {
 
 function Toast({ message, type }: propType) {
   return (
-    <div className="toast toast-center toast-top">
+    <div className="toast toast-center toast-top" style={{zIndex: 20}}>
         <div className={`alert ${type}`}>
             <span>{ message }</span>
         </div>
