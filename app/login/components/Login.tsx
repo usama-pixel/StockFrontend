@@ -25,7 +25,7 @@ function Login() {
             setDisabled(false)
         }).catch(err => {
             setDisabled(false)
-            setToastMsg(err?.response?.data?.message)
+            setToastMsg(err?.response?.data?.message || 'Some Error Occured')
             setShowToast(true);
             setTimeout(() => {setShowToast(false)}, 10000)
             console.log(err)

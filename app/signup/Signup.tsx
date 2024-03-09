@@ -18,22 +18,24 @@ function Signup() {
     const [password, setPassword] = useState('')
     const [showToast, setShowToast] = useState(false)
     const [toastMsg, setToastMsg] = useState('')
+    const [disabled, setDisabled] = useState(false)
     const router = useRouter()
 
     const handleLogin = () => {
+        setDisabled(true)
         axios.post('/signup', {
             firstname: firstName,
             lastname: lastName,
             email,
             password
         }).then(res => {
-            // Cookie.set('token', res.data?.user?.token)
+            setDisabled(false)
             router.push('/login')
-            // console.log('hah:',res.data)
         }).catch(err => {
+            setDisabled(false)
+            setToastMsg(err?.response?.data?.message || 'Some Error Occured')
             setShowToast(true);
             setTimeout(() => {setShowToast(false)}, 10000)
-            setToastMsg(err?.response?.data?.message)
             console.log(err)
         })
     }
@@ -64,7 +66,7 @@ function Signup() {
             onChange={e => setPassword(e.target.value)}
         />
         <div className='flex flex-col gap-2'>
-            <button onClick={handleLogin} className="btn btn-primary">Signup</button>
+            <button onClick={handleLogin} disabled={disabled} className="btn btn-primary">Signup</button>
             {
                 showToast &&
                 <Toast message={toastMsg} type={alertTypes.error} />
