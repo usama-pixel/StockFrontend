@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import axios from '@/utils/axiosConfig';
 import MyTable from '@/app/common/MyTable';
 import { rowsPerPage } from '@/utils/constants';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 function History() {
   const d = [
@@ -28,7 +30,14 @@ function History() {
   const [limit, setLimit] = useState(rowsPerPage)
   const [total, setTotal] = useState(0)
   const [srchVal, setSrchVal] = useState('')
+  const router = useRouter()
   useEffect(() => {
+    if(!Cookies.get('token')) {
+      router.push('/login')
+    }
+  }, [])
+  useEffect(() => {
+    if(!Cookies.get('token')) return
     getData()
   }, [currentPage, srchVal])
   const getData = () => {
@@ -38,7 +47,12 @@ function History() {
       setData(res.data?.rows)
       setTotal(res.data?.totalRows|0)
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      if(err.response.status === 401) {
+          router.push('/login')
+          Cookies.remove('token')
+      }
+    })
   }
   // console.log({currentPage})
   return (

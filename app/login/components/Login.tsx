@@ -20,7 +20,7 @@ function Login() {
         }).then(res => {
             Cookie.set('token', res.data?.user?.token)
             router.push('/home')
-            console.log('hah:', Cookie.get('token'))
+            // console.log('hah:', Cookie.get('token'))
         }).catch(err => {
             setShowToast(true);
             setTimeout(() => {setShowToast(false)}, 10000)

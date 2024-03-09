@@ -3,42 +3,29 @@ import React, { useEffect, useState } from 'react'
 import axios from '@/utils/axiosConfig';
 import Modal from '@/app/common/Modal';
 import InvoiceTable from './InvoiceTable';
-import MySelector from '@/app/common/MySelector';
 import { rowsPerPage } from '@/utils/constants';
 import { alertTypes } from '@/utils/enums';
 import Toast from '@/app/common/Toast';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 function Invoice() {
-  const d = [
-    {
-      id: 1,
-      person: 'Ismael',
-      amount: '100',
-      batchId: '202310',
-      status: 'Sent',
-      date: '10-09-2022'
-    },
-    {
-      id: 2,
-      person: 'Shafqat',
-      amount: '100',
-      batchId: '202311',
-      status: 'Recieved',
-      date: '10-09-2022'
-    },
-  ]
   const [data, setData] = useState([])
   const [totalPage, setTotalPage] = useState(9)
   const [currentPage, setCurrentPage] = useState(0)
   const [limit, setLimit] = useState(rowsPerPage)
   const [total, setTotal] = useState(2)
   const [srchVal, setSrchVal] = useState('')
+  const router = useRouter()
   useEffect(() => {
+    if(!Cookies.get('token')) {
+      router.push('/login')
+    }
+  }, [])
+  useEffect(() => {
+    if(!Cookies.get('token')) return
     getData()
   }, [currentPage, srchVal])
-  const handlePageChange = (i:number) => {
-    setCurrentPage(i)
-  }
   const getData = () => {
     axios.get(`/invoice?page=${currentPage}&limit=${limit}&search=${srchVal}`)
     .then(res => {
@@ -46,7 +33,12 @@ function Invoice() {
       setData(res.data?.invoices)
       setTotal(res.data?.totalRows | 1)
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      if(err.response.status === 401) {
+        router.push('/login')
+        Cookies.remove('token')
+      }
+    })
   }
   const [toast, setToast] = useState({
     type: alertTypes.success,

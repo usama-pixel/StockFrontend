@@ -2,11 +2,13 @@
 import Card from '@/app/common/Card'
 import LineChart from '@/app/common/LineChart'
 import { dailyData, days, long_months, monthlyData, short_months } from '@/utils/constants'
-import React, { BaseSyntheticEvent, SyntheticEvent, useEffect, useState } from 'react'
+import React, { BaseSyntheticEvent, SyntheticEvent, useEffect, useLayoutEffect, useState } from 'react'
 import axios from '@/utils/axiosConfig'
-import DatePicker from '@/app/common/MySelector'
 import MySelector from '@/app/common/MySelector'
 import { endOfMonth, getDate, parseISO } from 'date-fns'
+import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
+import { AxiosError } from 'axios'
 
 function Dashboard() {
     const base_year = 2022
@@ -20,6 +22,18 @@ function Dashboard() {
     const [rev, setRev] = useState('-')
     const [sales, setSales] = useState('-')
     const [toggle, setToggle] = useState<mode>(mode.Monthly)
+    const [dataMode, setDataMode] = useState('Monthly')
+    let years:any = {}
+    for(let i = 0; i < 28; i++) {years[i+""]=(i+2022)}
+    const [selectedYear, setSelectedYear] = useState((new Date).getFullYear())
+    const [selectedMonth, setSelectedMonth] = useState<number>((new Date()).getMonth())
+    const router = useRouter()
+    useEffect(() => {
+      if(!Cookies.get('token')) {
+        // router.replace('/login')
+        router.push('/login')
+      }
+    }, [])
     useEffect(() => {
         if(!data) return;
         console.log({selectedYear})
@@ -30,77 +44,80 @@ function Dashboard() {
             }
         }
     }, [toggle])
-    const [dataMode, setDataMode] = useState('Monthly')
-    let years:any = {}
-    for(let i = 0; i < 28; i++) {years[i+""]=(i+2022)}
-    const [selectedYear, setSelectedYear] = useState((new Date).getFullYear())
-    const [selectedMonth, setSelectedMonth] = useState<number>((new Date()).getMonth())
-console.log({hLine})
     const getData = async () => {
-        const d = await axios.get(`/tax?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
-        const s = await axios.get(`/sales?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
-        const r = await axios.get(`/revenue?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
-        const p4 = await axios.get(`/datapoints?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
-        setTax(d.data)
-        setSales(s.data)
-        setRev(r.data)
-        if(toggle == mode.Monthly) {
-            const d: {[key: number]: number} = {}
-            console.log({aa: p4?.data})
-            p4?.data?.map(({sum, date}: {sum: number, date:string}) => {
-                console.log({sum, date})
-                const day = +date.split('-')[2]
-                if(!d[day])
-                    return d[day] = sum
-                return d[day] += sum
-            })
-            // if(!month || !year) throw new Error('month or year null')
-            const lastDay = endOfMonth(new Date(selectedYear, selectedMonth)).getDate()
-            console.log({typeOfLastDay: lastDay,})
-            const tempHline: number[] = []
-            for(let i = 1; i <= lastDay; i++) {
-                tempHline.push(i)
-            }
-            setHLine(tempHline)
-            console.log('should run', tempHline)
-            const temp: number[] = []
-            for(let i = 0; i < lastDay; i++) {
-                if(d[i]) {
-                    temp.push(d[i])
-                    continue;
+        try {
+            const d = await axios.get(`/tax?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+            const s = await axios.get(`/sales?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+            const r = await axios.get(`/revenue?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+            const p4 = await axios.get(`/datapoints?monthIndex=${selectedMonth}&year=${+selectedYear}&mode=${toggle}`)
+            setTax(d.data)
+            setSales(s.data)
+            setRev(r.data)
+            if(toggle == mode.Monthly) {
+                const d: {[key: number]: number} = {}
+                console.log({aa: p4?.data})
+                p4?.data?.map(({sum, date}: {sum: number, date:string}) => {
+                    console.log({sum, date})
+                    const day = +date.split('-')[2]
+                    if(!d[day])
+                        return d[day] = sum
+                    return d[day] += sum
+                })
+                const lastDay = endOfMonth(new Date(selectedYear, selectedMonth)).getDate()
+                const tempHline: number[] = []
+                for(let i = 1; i <= lastDay; i++) {
+                    tempHline.push(i)
                 }
-                temp.push(0)
-            }
-            setData(temp)
-        }
-        else if(toggle === mode.Yearly) {
-            const d: {[key: number]: number} = {}
-            p4.data.map(({sum, date}: { sum: number, date: string }, i: number) => {
-                const month = +date.split('-')[1]
-                if(!d[month])
-                    return d[month] = sum
-                return d[month] += sum
-            })
-            const temp: number[] = []
-            for(let i = 0; i < 12; i++) {
-                if(d[i]) {
-                    temp.push(d[i])
-                    continue
+                setHLine(tempHline)
+                const temp: number[] = []
+                for(let i = 0; i < lastDay; i++) {
+                    if(d[i]) {
+                        temp.push(d[i])
+                        continue;
+                    }
+                    temp.push(0)
                 }
-                temp.push(0)
+                setData(temp)
             }
-            setData(temp)
-            for(let i = 0; i < 12; i++) {
-                if(i )
-                temp.push()
+            else if(toggle === mode.Yearly) {
+                const d: {[key: number]: number} = {}
+                p4.data.map(({sum, date}: { sum: number, date: string }, i: number) => {
+                    const month = +date.split('-')[1]
+                    if(!d[month])
+                        return d[month] = sum
+                    return d[month] += sum
+                })
+                const temp: number[] = []
+                for(let i = 0; i < 12; i++) {
+                    if(d[i]) {
+                        temp.push(d[i])
+                        continue
+                    }
+                    temp.push(0)
+                }
+                setData(temp)
+                for(let i = 0; i < 12; i++) {
+                    if(i )
+                    temp.push()
+                }
+                setHLine(Object.values(short_months))
             }
-            setHLine(Object.values(short_months))
-        }
         // Promise.
+        } catch(err: any) {
+            if(err.response.status === 401) {
+                router.push('/login')
+                Cookies.remove('token')
+            }
+            console.log({err})
+        }
     }
     useEffect(() => {
-        console.log('ran')
-        getData()
+        if(!Cookies.get('token')) return
+        try {
+            getData()
+        } catch(err) {
+            console.log({err})
+        }
         if(toggle === mode.Monthly) {
             setDataMode('Monthly')
         }

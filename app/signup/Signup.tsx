@@ -27,9 +27,9 @@ function Signup() {
             email,
             password
         }).then(res => {
-            Cookie.set('token', res.data?.user?.token)
-            router.push('/home')
-            console.log('hah:',res.data)
+            // Cookie.set('token', res.data?.user?.token)
+            router.push('/login')
+            // console.log('hah:',res.data)
         }).catch(err => {
             setShowToast(true);
             setTimeout(() => {setShowToast(false)}, 10000)

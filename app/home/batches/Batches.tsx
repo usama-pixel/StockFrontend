@@ -12,6 +12,8 @@ import { AxiosResponse } from 'axios';
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SendIcon from '@mui/icons-material/Send'
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 type StatusType = {
     name: string
@@ -34,7 +36,6 @@ function Batches() {
         show: false
     })
     const pageSizeOptions = [3, 4, 100]
-    // const [pageNumber, setPageNumber] = useState(0)
     const [limit, setLimit] = useState(rowsPerPage)
     const [total, setTotal] = useState(rowsPerPage)
     const [currentPage, setCurrentPage] = useState(0)
@@ -42,31 +43,43 @@ function Batches() {
     const [btnDisabled, setBtnDisabled] = useState(false)
     const [to, setTo] = React.useState('')
     const [sendDisable, setSendDisable] = useState(false)
-    // const [batch_id, setBatch_id] = useState('')
     const [batchId, setBatchId] = useState<string>()
+    const router = useRouter()
+    useEffect(() => {
+      if(!Cookies.get('token')) {
+        // router.replace('/login')
+        router.push('/login')
+      }
+    }, [])
     const getData = () => {
-    axios.get(`/batch?page=${currentPage}&limit=${limit}&search=${srchVal}`)
-    .then(res => {
-        setData(res.data?.rows?.map((d: any) => {
-            d.id === 28 && console.log(d)
-            const revised_data = {
-                id: d.id,
-                status: d?.Status?.name[0]?.toUpperCase() + d?.Status?.name.slice(1),
-                product_name: d.product_name,
-                quantity: d.quantity,
-                rate: d.rate,
-                tax: d.tax,
-                discount: d.discount,
-                expiry_date: d.expiry_date,
-                packing: d.packing,
+        axios.get(`/batch?page=${currentPage}&limit=${limit}&search=${srchVal}`)
+        .then(res => {
+            setData(res.data?.rows?.map((d: any) => {
+                d.id === 28 && console.log(d)
+                const revised_data = {
+                    id: d.id,
+                    status: d?.Status?.name[0]?.toUpperCase() + d?.Status?.name.slice(1),
+                    product_name: d.product_name,
+                    quantity: d.quantity,
+                    rate: d.rate,
+                    tax: d.tax,
+                    discount: d.discount,
+                    expiry_date: d.expiry_date,
+                    packing: d.packing,
+                }
+                return revised_data;
+            }))
+            setTotal(res?.data?.totalRows||0)
+        })
+        .catch(err => {
+            if(err.response.status === 401) {
+                router.push('/login')
+                Cookies.remove('token')
             }
-            return revised_data;
-        }))
-        setTotal(res?.data?.totalRows||0)
-    })
-    .catch(err => console.log(err))
+        })
     }
     useEffect(() => {
+        if(!Cookies.get('token')) return
         getData()
     }, [currentPage, limit, srchVal])
     const convertDate = (dateString: string): string => {
