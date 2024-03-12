@@ -1,0 +1,22 @@
+.cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // grid-template-columns: 350px 350px 350px;
+    gap: 10px;
+}
+
+.chartContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (max-width: 1085px) {
+    .cards {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        // background: green;
+    }
+}

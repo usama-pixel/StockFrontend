@@ -5,7 +5,7 @@ import Dashboard from './dashboard/page'
 function page() {
   return (
     <>
-        <Dashboard />
+      <Dashboard />
     </>
   )
 }

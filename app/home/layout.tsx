@@ -7,11 +7,12 @@ function layout({
     children: React.ReactNode;
   }>) {
   return (
-    <div className="grid grid-cols-6">
-      <div className='bg-green-500 col-span-1'>
+    // <div className="grid grid-cols-6 gap-1">
+    <div className='flex flex-row w-full'>
+      <div>
         <SideNavigation />
       </div>
-      <div className='col-span-5'>
+      <div className='w-full sm:ml-36'>
         {children}
       </div>
     </div>

@@ -132,11 +132,11 @@ function InvoiceTable({
             </div>
         </dialog>
         {toast.show && <Toast message={toast.msg} type={toast.type} />}
-        <div className='flex flex-row mb-5 justify-between'>
-            <div className='gap-2 flex flex-row'>
+        <div className='flex flex-col mb-5 md:justify-between md:flex-row'>
+            <div className='mb-2 gap-2 flex flex-row md:mb-0'>
                 <input className='input bg-primary text-white placeholder:text-gray-700' placeholder='Search' value={srchVal} onChange={e => setSrchVal(e.target.value)} />
             </div>
-            <button className='btn btn-primary' onClick={handleGenerateInvoice}>Generate Invoice</button>
+            <button className='btn btn-primary w-fit' onClick={handleGenerateInvoice}>Generate Invoice</button>
         </div>
         <div className='grid grid-cols-8 mt-4'>
             <span className='col-span-1 p-2 font-bold mb-3'>Invoice Id</span>

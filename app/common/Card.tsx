@@ -1,8 +1,8 @@
 import React from 'react'
-
+import styles from './card.module.scss'
 function Card({title, body}: {title: string, body: string}) {
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
+    <div className={`${styles.myCard} card w-full bg-base-100 shadow-xl`} style={{minWidth: '295px'}}>
         <div className="card-body">
             
             <h2 className="card-title">

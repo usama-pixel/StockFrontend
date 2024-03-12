@@ -8,7 +8,7 @@ import MySelector from '@/app/common/MySelector'
 import { endOfMonth, getDate, parseISO } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
-import { AxiosError } from 'axios'
+import styles from './dashboard.module.scss'
 
 function Dashboard() {
     const base_year = 2022
@@ -134,8 +134,9 @@ function Dashboard() {
         setSelectedYear(+e.target.value+base_year)
     }
   return (
-    <div className="p-4 bg-primary" style={{width: '100%'}}>
-        <div className='grid grid-cols-3 gap-5'>
+    <div className="p-4 bg-primary w-full" >
+        {/* <div className='sm:grid sm:grid-cols-3 sm:gap-5 gap-5'> */}
+        <div className={styles.cards}>
             <Card title='Sales' body={sales} />
             <Card title='Revenue' body={rev} />
             <Card title='Tax' body={tax} />
@@ -160,8 +161,8 @@ function Dashboard() {
                 />
             </div>
         </div>
-        <div className='bg-amber-50 rounded-xl mt-5'>
-            <LineChart data={data} horizontalLabels={hLine} width={1200} />
+        <div className={`${styles.chartContainer} bg-amber-50 ml-auto mr-auto rounded-xl mt-5 w-fit`}>
+            <LineChart data={data} horizontalLabels={hLine} />
         </div>
     </div>
   )
