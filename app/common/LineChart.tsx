@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import styles from './styles/line-chart.module.scss';
 import * as d3 from 'd3';
 
@@ -50,8 +50,8 @@ function LineChart({
     }
     const line = d3.line<number>().x((d, i) => x(i)).y(y);
 
-    const handleMouseOver = (xValue: number, yValue: number, value: number) => {
-      setTooltipData({ x: xValue, y: yValue, value: value });
+    const handleMouseOver = (xValue: number, yValue: number, value: number, e: any) => {
+      setTooltipData({ x: e.clientX-154, y: e.clientY-70, value: value });
     };
 
     const handleMouseOut = () => {
@@ -70,6 +70,13 @@ function LineChart({
         window.removeEventListener('resize', handleResize)
       }
     }, [])
+    // useEffect(() => {
+    //   if (tooltipData) {
+    //      const newX = x(tooltipData.x);
+    //      const newY = y(tooltipData.y);
+    //      setTooltipData({ ...tooltipData, x: newX, y: newY });
+    //   }
+    // }, [data, x, y]);
     useEffect(() => {
       if(width <= 626)
         setLineWid(3)
@@ -104,8 +111,8 @@ function LineChart({
             className="tooltip shadow-lg bg-white dark:bg-gray-800 dark:text-white"
             style={{
               position: 'absolute',
-              left: tooltipData.x ,
-              top: tooltipData.y + ((170)*((1536/width)*1.0000002)), // Adjust this value to position the tooltip properly
+              left: tooltipData.x +140,
+              top: tooltipData.y, // Adjust this value to position the tooltip properly
               padding: 10,
               borderRadius: 10
             }}
@@ -136,7 +143,7 @@ function LineChart({
                 cx={x(i) || 0}
                 cy={y(d) || 0}
                 className={`${styles.circle}`}
-                onMouseOver={() => handleMouseOver(x(i) || 0, y(d) || 0, d)}
+                onMouseOver={(e) => handleMouseOver(x(i) || 0, y(d) || 0, d,e)}
                 onMouseOut={handleMouseOut}
                 style={{ cursor: 'pointer' }}
               />

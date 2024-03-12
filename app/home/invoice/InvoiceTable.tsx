@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import axios from '@/utils/axiosConfig'
 import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
-import Modal from '@/app/common/Modal'
 import { alertTypes } from '@/utils/enums'
 import Toast from '@/app/common/Toast'
+import styles from './invoice.module.scss'
+
 type DataType = {
     id: string,
     party_acc_no: string
@@ -13,8 +14,6 @@ type DataType = {
     proreitor: number
     town: number
     salesman: number
-    // packing: string
-    // expiry
 }
 
 type PropType = {
@@ -159,10 +158,10 @@ function InvoiceTable({
                         <span className='col-span-1 px-2 mt-1'>{itm.salesman}</span>
                         <span className='col-span-1 w-fit grid mt-1 grid-cols-2 gap-1' >
                             
-                            <button className='col-span-1 btn btn-primary w-fit' onClick={e => handleDownload(itm.id)}>
-                            <DownloadIcon />
+                            <button className={styles.btn} onClick={e => handleDownload(itm.id)}>
+                                <DownloadIcon />
                             </button>
-                            <button className='col-span-1 btn btn-primary w-fit' onClick={e => handleDelete(itm.id)}>
+                            <button className={styles.btn} onClick={e => handleDelete(itm.id)}>
                                 <DeleteIcon />
                             </button>
                             {/* <button className='col-span-1 btn btn-primary w-fit' onClick={e => handleDownload(itm.id)}>Download</button> */}

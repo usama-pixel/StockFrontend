@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import SendIcon from '@mui/icons-material/Send'
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import styles from './batches.module.scss'
 
 type StatusType = {
     name: string
@@ -356,7 +357,7 @@ function Batches() {
         return format(date, 'yyyy-MM-dd');
     }
   return (
-    <div className="p-4" style={{width: '100%', marginLeft: 'auto', marginRight: 'auto'}}>
+    <div className="p-4" style={{width: '100%', marginLeft: 'auto', marginRight: 'auto', minWidth: '440px'}}>
         {toast.show && <Toast message={toast.msg} type={toast.type} />}
         <Modal setData={null} Body={ModalBody}/>
         <dialog id="edit_modal" className="modal" style={{zIndex: 10}}>
@@ -512,40 +513,63 @@ function Batches() {
                 </div>
                 <button className='btn btn-primary' onClick={handleAddBatch}>Add Batch</button>
             </div>
-            <div className='grid grid-cols-12 mt-4'>
-                <span className='col-span-1 p-2 font-bold mb-3'>Batch Id</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Product Name</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Quantity</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Status</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Rate</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Tax</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Discount</span>
-                <span className='col-span-2 p-2 font-bold mb-3'>Expiry</span>
-                <span className='col-span-1 p-2 font-bold mb-3'>Packing</span>
-                <span className='col-span-2 p-2 font-bold mb-3'>Actions</span>
+            <div className='grid grid-cols-8 md:grid-cols-12 mt-4'>
+                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Batch Id</span>
+                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Product Name</span>
+                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Qty</span>
+                <span className='col-span-1 p-2 font-bold mb-3 hidden md:block md:text-middle xlg:text-right'>Status</span>
+                <span className='col-span-1 p-2 font-bold mb-3 text-center'>Rate</span>
+                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Tax</span>
+                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Discount</span>
+                <span className='col-span-2 p-2 font-bold mb-3 hidden md:block text-right lg:text-center'>Expiry</span>
+                <span className='col-span-1 p-2 font-bold mb-3 hidden text-left md:block'>Packing</span>
+                <span className='col-span-2 p-2 font-bold mb-3 text-right lg:text-left'>Actions</span>
                 {data?.map(itm => {
                     return (
                         <>
-                            <span className='col-span-1 px-2 mt-1'>{itm.id}</span>
+                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.id}</span>
                             <span className='col-span-1 px-2 mt-1'>{itm.product_name}</span>
                             <span className='col-span-1 px-2 mt-1'>{itm.quantity}</span>
-                            <span className='col-span-1 px-2 mt-1'>{itm.status}</span>
-                            <span className='col-span-1 px-2 mt-1'>{itm.rate}</span>
+                            <span className='hidden md:block col-span-1 px-2 mt-1'>{itm.status}</span>
+                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.rate}</span>
                             <span className='col-span-1 px-2 mt-1'>{itm.tax}</span>
-                            <span className='col-span-1 px-2 mt-1'>{itm.discount}</span>
-                            <span className='col-span-2 px-2 mt-1'>{convertDate(itm.expiry_date)}</span>
-                            <span className='col-span-1 px-2 mt-1'>{itm.packing}</span>
-                            <span className='col-span-2 mt-1 w-fit grid grid-cols-3 gap-1' >
-                                <button className='btn btn-primary w-fit' onClick={e => handleEdit(itm.id)}>
-                                    <EditIcon />
+                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.discount}</span>
+                            <span className='col-span-2 px-2 mt-1 hidden md:block text-center'>{convertDate(itm.expiry_date)}</span>
+                            <span className='col-span-1 px-2 mt-1 hidden md:block'>{itm.packing}</span>
+                            <span className='hidden md:grid col-span-2 mt-1 w-fit h-fit grid-cols-3 gap-1' >
+                                <button
+                                    onClick={e => handleEdit(itm.id)}
+                                    className={styles.btn}>
+                                    <EditIcon
+                                    />
                                 </button>
-                                <button className='btn btn-primary w-fit' onClick={e => handleSend(itm.id)}>
-                                    <SendIcon />
+                                <button
+                                    className={styles.btn}
+                                    onClick={e => handleSend(itm.id)}
+                                >
+                                    <SendIcon
+                                    />
                                 </button>
-                                <button className='btn btn-primary w-fit' onClick={e => handleDelete(itm.id)}>
-                                    <DeleteIcon />
+                                <button
+                                    className={styles.btn}
+                                    onClick={e => handleDelete(itm.id)}
+                                >
+                                    <DeleteIcon
+                                    />
                                 </button>
                             </span>
+                            <select
+                            onChange={
+                                ({target: {value}}) => value === '1' ?
+                                handleEdit(itm.id) : value === '2' ?
+                                handleSend(itm.id) : value === '3' ?
+                                handleDelete(itm.id) : null
+                            }
+                            className='grid md:hidden col-span-2 mt-1 w-fit grid-cols-3 gap-1 select select-bordered'>
+                                <option onClick={e => handleEdit(itm.id)} selected value={1}>Edit</option>
+                                <option onClick={e => handleSend(itm.id)} value={2}>Send</option>
+                                <option onClick={e => handleDelete(itm.id)} value={3}>Delete</option> 
+                            </select>
                         </>
                     )
                 })}

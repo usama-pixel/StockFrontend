@@ -31,7 +31,10 @@ function MyTable({
     setSrchVal,
 }: PropType) {
   return (
-    <div className='border border-collapse p-3 border-solid border-primary rounded-md mt-5'>
+    <div
+        className='border border-collapse p-3 border-solid border-primary rounded-md mt-5'
+        style={{minWidth: '440px'}}
+    >
         <div className='flex flex-row mb-5 justify-between'>
             <div className='gap-2 flex flex-row'>
                 <input className='input bg-primary text-white placeholder:text-gray-700' placeholder='Search' value={srchVal} onChange={e => setSrchVal(e.target.value)} />
