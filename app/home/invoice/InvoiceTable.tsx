@@ -115,7 +115,7 @@ function InvoiceTable({
         })
     }
   return (
-    <div className='border border-collapse p-3 border-solid border-primary rounded-md mt-5'>
+    <div className='border border-collapse p-3 border-solid border-primary rounded-md mt-5' style={{minWidth: '500px'}}>
         <dialog id="my_modal_1" className="modal">
             <div className="modal-box">
                 <form method="dialog">
@@ -137,11 +137,11 @@ function InvoiceTable({
             </div>
             <button className='btn btn-primary w-fit' onClick={handleGenerateInvoice}>Generate Invoice</button>
         </div>
-        <div className='grid grid-cols-8 mt-4'>
+        <div className='grid grid-cols-7 lg:grid-cols-8 mt-4'>
             <span className='col-span-1 p-2 font-bold mb-3'>Invoice Id</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Party Account</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Party Name</span>
-            <span className='col-span-1 p-2 font-bold mb-3'>CNIC</span>
+            <span className='hidden lg:block col-span-1 p-2 font-bold mb-3'>CNIC</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Prorietor</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Town</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Salesman</span>
@@ -152,7 +152,7 @@ function InvoiceTable({
                         <span className='col-span-1 px-2 mt-1'>{itm.id}</span>
                         <span className='col-span-1 px-2 mt-1'>{itm.party_acc_no}</span>
                         <span className='col-span-1 px-2 mt-1'>{itm.party_name}</span>
-                        <span className='col-span-1 px-2 mt-1'>{itm.cnic_no}</span>
+                        <span className='hidden lg:block col-span-1 px-2 mt-1'>{itm.cnic_no}</span>
                         <span className='col-span-1 px-2 mt-1'>{itm.proreitor}</span>
                         <span className='col-span-1 px-2 mt-1'>{itm.town}</span>
                         <span className='col-span-1 px-2 mt-1'>{itm.salesman}</span>
