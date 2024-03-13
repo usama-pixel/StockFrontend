@@ -8,11 +8,11 @@ function layout({
   }>) {
   return (
     // <div className="grid grid-cols-6 gap-1">
-    <div className='flex flex-row w-full'>
+    <div className='flex flex-row w-full min-w-80'>
       <div>
         <SideNavigation />
       </div>
-      <div className='w-full sm:ml-36'>
+      <div className='w-full min-w-fit sm:ml-36'>
         {children}
       </div>
     </div>

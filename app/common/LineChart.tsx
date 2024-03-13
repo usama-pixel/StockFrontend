@@ -26,11 +26,6 @@ function LineChart({
     const [width, setWidth] = useState(window.innerWidth-140)
     const [lineWid, setLineWid] = useState(1)
     const svgRef = useRef(null);
-    const [tooltipData, setTooltipData] = useState<{
-      x: number;
-      y: number;
-      value: number;
-    } | null>(null)
     const x = d3
       .scaleLinear()
       .domain([0, data.length+lineWid]) // here
@@ -51,11 +46,27 @@ function LineChart({
     const line = d3.line<number>().x((d, i) => x(i)).y(y);
 
     const handleMouseOver = (xValue: number, yValue: number, value: number, e: any) => {
-      setTooltipData({ x: e.clientX-154, y: e.clientY-70, value: value });
+      const tooltip = d3.select("#tooltip");
+      let cutY = 290;
+      let cutX = 220
+      if(width <= 1085) cutY = 360
+      if(width <= 640) cutX = 150
+      tooltip.style("opacity", 0.9);
+      tooltip.style('color', 'white')
+      tooltip.style('background', 'black')
+      tooltip.style('padding-top', '8px')
+      tooltip.style('padding-bottom', '8px')
+      tooltip.style('padding-left', '10px')
+      tooltip.style('padding-right', '10px')
+      tooltip.style('border-radius', '10px')
+      tooltip.html(`Value: ${value}`);
+      tooltip.style("left", `${e.clientX-cutX}px`)
+          .style("top", `${e.clientY-cutY}px`);
     };
 
     const handleMouseOut = () => {
-      setTooltipData(null);
+      const tooltip = d3.select("#tooltip");
+      tooltip.style("opacity", 0);
     };
     useEffect(() => {
       const handleResize = () => {
@@ -70,13 +81,6 @@ function LineChart({
         window.removeEventListener('resize', handleResize)
       }
     }, [])
-    // useEffect(() => {
-    //   if (tooltipData) {
-    //      const newX = x(tooltipData.x);
-    //      const newY = y(tooltipData.y);
-    //      setTooltipData({ ...tooltipData, x: newX, y: newY });
-    //   }
-    // }, [data, x, y]);
     useEffect(() => {
       if(width <= 626)
         setLineWid(3)
@@ -103,23 +107,8 @@ function LineChart({
         .duration(2000)
         .attr("d", line)
     }, [data, height, line, width]);
-    // console.log({horizontalLabels})
     return (
-      <div className='w-full'>
-        {tooltipData && (
-          <div
-            className="tooltip shadow-lg bg-white dark:bg-gray-800 dark:text-white"
-            style={{
-              position: 'absolute',
-              left: tooltipData.x +140,
-              top: tooltipData.y, // Adjust this value to position the tooltip properly
-              padding: 10,
-              borderRadius: 10
-            }}
-          >
-            {tooltipData.value}
-          </div>
-        )}
+      <div className='w-full relative'>
         <svg ref={svgRef}>
           <g fill="currentColor" fontSize="12" textAnchor="middle">
             {/* Horizontal labels */}
@@ -136,20 +125,27 @@ function LineChart({
               </text>
             ))}
           </g>
-          <g fill="currentColor" stroke="currentColor" strokeWidth="3">
+          <g
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth="3"
+          >
             {data.map((d, i) => (
-              <circle
-                key={i}
-                cx={x(i) || 0}
-                cy={y(d) || 0}
-                className={`${styles.circle}`}
-                onMouseOver={(e) => handleMouseOver(x(i) || 0, y(d) || 0, d,e)}
-                onMouseOut={handleMouseOut}
-                style={{ cursor: 'pointer' }}
-              />
+              <>
+                <circle
+                  key={i}
+                  cx={x(i) || 0}
+                  cy={y(d) || 0}
+                  className={`${styles.circle}`}
+                  onMouseOver={(e) => handleMouseOver(x(i) || 0, y(d) || 0, d,e)}
+                  onMouseOut={handleMouseOut}
+                  style={{ cursor: 'pointer' }}
+                />
+              </>
             ))}
           </g>
         </svg>
+        <div id="tooltip" style={{ position: 'absolute', opacity: 0 }}></div>
       </div>
     )
 }

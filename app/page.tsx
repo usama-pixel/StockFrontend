@@ -1,9 +1,9 @@
-import Image from "next/image";
-
+import Landing from "./Landing";
 export default function Home() {
+  
   return (
     <main>
-      <h1>Landing page</h1>
+      <Landing />
     </main>
   );
 }
