@@ -22,7 +22,7 @@ function SideNavigation() {
             <div className='flex flex-col justify-between'>
                 {/* 1 done */}
                 <button
-                    onClick={() => router.push('/home/batches')}
+                    onClick={() => router.push('/home')}
                     data-drawer-target="default-sidebar"
                     data-drawer-toggle="default-sidebar"
                     aria-controls="default-sidebar"
