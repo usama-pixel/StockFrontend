@@ -33,7 +33,7 @@ function MyTable({
   return (
     <div
         className='border border-collapse p-3 border-solid border-primary rounded-md mt-5'
-        style={{minWidth: '440px'}}
+        style={{minWidth: '540px'}}
     >
         <div className='flex flex-row mb-5 justify-between'>
             <div className='gap-2 flex flex-row'>
@@ -43,9 +43,9 @@ function MyTable({
         <div className='grid grid-cols-7'>
             <span className='col-span-1 p-2 font-bold'>Batch Id</span>
             <span className='col-span-1 p-2 font-bold'>Product Name</span>
-            <span className='col-span-1 p-2 font-bold text-center md:text-left'>To</span>
+            <span className='col-span-1 p-2 font-bold'>To</span>
             <span className='col-span-1 p-2 font-bold'>Rate</span>
-            <span className='col-span-1 p-2 font-bold'>Discount</span>
+            <span className='col-span-1 p-2 font-bold text-left'>Discount</span>
             <span className='col-span-1 p-2 font-bold'>Tax</span>
             <span className='col-span-1 p-2 font-bold'>Packing</span>
             {data.map(itm => {
