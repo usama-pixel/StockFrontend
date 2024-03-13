@@ -357,7 +357,7 @@ function Batches() {
         return format(date, 'yyyy-MM-dd');
     }
   return (
-    <div className="p-4" style={{width: '100%', marginLeft: 'auto', marginRight: 'auto', minWidth: '440px'}}>
+    <div className="p-4" style={{width: '100%', marginLeft: 'auto', marginRight: 'auto', minWidth: '485px'}}>
         {toast.show && <Toast message={toast.msg} type={toast.type} />}
         <Modal setData={null} Body={ModalBody}/>
         <dialog id="edit_modal" className="modal" style={{zIndex: 10}}>
@@ -516,7 +516,7 @@ function Batches() {
             <div className='grid grid-cols-8 md:grid-cols-12 mt-4'>
                 <span className='col-span-1 p-2 font-bold mb-3 text-left'>Batch Id</span>
                 <span className='col-span-1 p-2 font-bold mb-3 text-left'>Product Name</span>
-                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Qty</span>
+                <span className='col-span-1 p-2 font-bold mb-3 md:text-left text-right'>Qty</span>
                 <span className='col-span-1 p-2 font-bold mb-3 hidden md:block md:text-middle xlg:text-right'>Status</span>
                 <span className='col-span-1 p-2 font-bold mb-3 text-center'>Rate</span>
                 <span className='col-span-1 p-2 font-bold mb-3 text-left'>Tax</span>
