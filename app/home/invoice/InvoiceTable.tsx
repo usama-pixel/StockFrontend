@@ -115,7 +115,7 @@ function InvoiceTable({
         })
     }
   return (
-    <div className='border border-collapse p-3 border-solid border-primary rounded-md mt-5' style={{minWidth: '500px'}}>
+    <div className='border border-collapse p-3 border-solid border-primary rounded-md mt-5' style={{minWidth: '532px'}}>
         <dialog id="my_modal_1" className="modal">
             <div className="modal-box">
                 <form method="dialog">
@@ -144,8 +144,8 @@ function InvoiceTable({
             <span className='hidden lg:block col-span-1 p-2 font-bold mb-3'>CNIC</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Prorietor</span>
             <span className='col-span-1 p-2 font-bold mb-3'>Town</span>
-            <span className='col-span-1 p-2 font-bold mb-3'>Salesman</span>
-            <span className='col-span-1 p-2 font-bold mb-3'>Action</span>
+            <span className='col-span-1 p-2 font-bold mb-3 text-right md:text-left'>Salesman</span>
+            <span className='col-span-1 p-2 font-bold mb-3 text-right md:text-left'>Action</span>
             {data?.map(itm => {
                 return (
                     <>

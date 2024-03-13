@@ -43,7 +43,7 @@ function MyTable({
         <div className='grid grid-cols-7'>
             <span className='col-span-1 p-2 font-bold'>Batch Id</span>
             <span className='col-span-1 p-2 font-bold'>Product Name</span>
-            <span className='col-span-1 p-2 font-bold'>To</span>
+            <span className='col-span-1 p-2 font-bold text-center md:text-left'>To</span>
             <span className='col-span-1 p-2 font-bold'>Rate</span>
             <span className='col-span-1 p-2 font-bold'>Discount</span>
             <span className='col-span-1 p-2 font-bold'>Tax</span>
