@@ -59,7 +59,10 @@ function Invoice() {
         salesman: '',
         town: '',
         cnic_no: '',
+        discount: '',
+        tax: '',
     })
+    const [taxType, setTaxType] = useState('text')
     const [disabled, setDisabled] = useState(false)
     const handleGenerate = (e: any) => {
       if(!(req.licence_no && req.party_acc && req.party_name && req.phone && req.proreitor && req.salesman && req.town)) {
@@ -252,24 +255,39 @@ function Invoice() {
               // if(!req.cnic_no)
               //   setReq(prev => ({...prev, cnic_no: true}))
             }}
-            // onBlur={() => {
-            //   if(!req.cnic_no)
-            //     setReq(prev => ({...prev, cnic_no: true}))
-            // }}
         />
-        {/* {(req.cnic_no && formData.cnic_no.length === 0) && <span>Required</span> } */}
+        <input
+            className='input border-secondary'
+            placeholder='Discount'
+            value={formData.discount}
+            type='number'
+            onChange={e => {
+              setFormData(prev => ({...prev, discount: e.target.value}))
+            }}
+        />
+        <input
+            className='input border-secondary'
+            placeholder='Tax'
+            value={formData.tax}
+            type={'number'}
+            onChange={e => {
+              setFormData(prev => ({...prev, tax: e.target.value}))
+            }}
+            onFocus={() => setTaxType('number')}
+        />
         <div className='border border-collapse p-3 border-solid border-primary rounded-md mt-5'>
-          <div className='grid grid-cols-5'>
+          <div className='grid grid-cols-6'>
             <span className='col-span-1'></span>
-            <span className='col-span-2 p-2 font-bold'>Batch Id</span>
+            <span className='col-span-1 p-2 font-bold'>Batch Id</span>
+            <span className='col-span-2 p-2 font-bold'>Product Name</span>
             <span className='col-span-2 p-2 font-bold'>To</span>
           </div>
           <div>
             {batches?.map((itm: any, indx) => {
                 return (
-                  <label className='grid grid-cols-5' key={indx}>
+                  <label className='grid grid-cols-6' key={indx}>
                     <input
-                      className='col-span-1'
+                      className='col-span-1 w-4 h-4 rounded-lg text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
                       type="checkbox"
                       checked={ids.includes(itm.id as string)}
                       onChange={(event) => {
@@ -280,7 +298,8 @@ function Invoice() {
                         }
                       }}
                     />
-                    <span className='col-span-2 px-2'>{itm.id}</span>
+                    <span className='col-span-1 px-2'>{itm.id}</span>
+                    <span className='col-span-2 px-2'>{itm.product_name}</span>
                     <span className='col-span-2 px-2'>{itm.to}</span>
                   </label>
                 )

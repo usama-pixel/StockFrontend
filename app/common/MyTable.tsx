@@ -40,24 +40,20 @@ function MyTable({
                 <input className='input bg-primary text-white placeholder:text-gray-700' placeholder='Search' value={srchVal} onChange={e => setSrchVal(e.target.value)} />
             </div>
         </div>
-        <div className='grid grid-cols-7'>
+        <div className='grid grid-cols-6'>
             <span className='col-span-1 p-2 font-bold'>Batch Id</span>
-            <span className='col-span-1 p-2 font-bold'>Product Name</span>
+            <span className='col-span-2 p-2 font-bold'>Product Name</span>
             <span className='col-span-1 p-2 font-bold'>To</span>
             <span className='col-span-1 p-2 font-bold'>Rate</span>
-            <span className='col-span-1 p-2 font-bold text-left'>Discount</span>
-            <span className='col-span-1 p-2 font-bold'>Tax</span>
             <span className='col-span-1 p-2 font-bold'>Packing</span>
             {data.map(itm => {
                 return (
                     // <div className='flex flex-row gap-2'>
                     <>
                         <span className='col-span-1 px-2'>{itm.id}</span>
-                        <span className='col-span-1 px-2'>{itm.product_name}</span>
+                        <span className='col-span-2 px-2'>{itm.product_name}</span>
                         <span className='col-span-1 px-2'>{itm.to}</span>
                         <span className='col-span-1 px-2'>{itm.rate}</span>
-                        <span className='col-span-1 px-2'>{itm.discount}</span>
-                        <span className='col-span-1 px-2'>{itm.tax}</span>
                         <span className='col-span-1 px-2'>{itm.packing}</span>
                     </>
                     // </div>

@@ -63,14 +63,12 @@ function Batches() {
                     product_name: d.product_name,
                     quantity: d.quantity,
                     rate: d.rate,
-                    tax: d.tax,
-                    discount: d.discount,
                     expiry_date: d.expiry_date,
                     packing: d.packing,
                 }
                 return revised_data;
             }))
-            setTotal(res?.data?.totalRows||0)
+            setTotal(res?.data?.totalRows||rowsPerPage)
         })
         .catch(err => {
             if(err.response.status === 401) {
@@ -130,8 +128,6 @@ function Batches() {
                     quantity: "",
                     rate: "",
                     expiry_date: "",
-                    discount: "",
-                    tax: "",
                 }}
                 validate={values => {
                     let errors = {};
@@ -151,8 +147,6 @@ function Batches() {
                 }}
                 onSubmit={(values, { setSubmitting }) => {
                     values.rate = (+values.rate).toFixed(2)
-                    values.discount = (+values.discount).toFixed(2)
-                    values.tax = (+values.tax).toFixed(2)
                     handleAdd(values)
                     setSubmitting(false);
                 }}
@@ -168,8 +162,8 @@ function Batches() {
                         <ErrorMessage name="rate" component="div" />
                         <Field type="date" name="expiry_date" placeholder="Expiry Date" className="input input-bordered w-full max-w-xs mt-2" />
                         <ErrorMessage name="expiry_date" component="div" />
-                        <Field type="number" name="discount" placeholder="Discount" className="input input-bordered w-full max-w-xs mt-2" />
-                        <Field type="number" name="tax" placeholder="Tax" className="input input-bordered w-full max-w-xs mt-2" />
+                        {/* <Field type="number" name="discount" placeholder="Discount" className="input input-bordered w-full max-w-xs mt-2" />
+                        <Field type="number" name="tax" placeholder="Tax" className="input input-bordered w-full max-w-xs mt-2" /> */}
                         <ErrorMessage name="password" component="div" />
                         <button className='btn btn-primary w-full max-w-xs mt-2' type="submit" disabled={btnDisabled}>
                             Submit
@@ -276,8 +270,6 @@ function Batches() {
         quantity: 0,
         status: status.recieved,
         rate: 0,
-        tax: 0,
-        discount: 0,
         expiry_date: '',
         packing: ''
     })
@@ -285,14 +277,12 @@ function Batches() {
         setBatchId(id)
         const d = data.find(d => d.id === id)
         setEditData((prev: any): any => ({
-            discount: d?.discount,
             expiry_date: d?.expiry_date,
             packing: d?.packing,
             product_name: d?.product_name,
             quantity: d?.quantity,
             rate: d?.rate,
             status: d?.status,
-            tax: d?.tax
         }))
         const modalElement = document.getElementById('edit_modal') as HTMLDialogElement;
         if (modalElement !== null) {
@@ -418,30 +408,6 @@ function Batches() {
                         </label>
                         <label className='form-control w-full max-w-xs'>
                             <div className='label'>
-                                <span className='label-text-alt'>Tax</span>
-                            </div>
-                            <input
-                                placeholder='Tax'
-                                className='input input-bordered'
-                                type='number'
-                                value={editData.tax}
-                                onChange={e => setEditData((prev: any) => ({...prev, tax: e.target.value}))}
-                            />
-                        </label>
-                        <label className='form-control w-full max-w-xs'>
-                            <div className='label'>
-                                <span className='label-text-alt'>Discount</span>
-                            </div>
-                            <input
-                                placeholder='Discount'
-                                className='input input-bordered'
-                                type='number'
-                                value={editData.discount}
-                                onChange={e => setEditData((prev: any) => ({...prev, discount: e.target.value}))}
-                            />
-                        </label>
-                        <label className='form-control w-full max-w-xs'>
-                            <div className='label'>
                                 <span className='label-text-alt'>Expiry</span>
                             </div>
                             <input
@@ -515,25 +481,25 @@ function Batches() {
             </div>
             <div className='grid grid-cols-8 md:grid-cols-12 mt-4'>
                 <span className='col-span-1 p-2 font-bold mb-3 text-left'>Batch Id</span>
-                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Product Name</span>
+                <span className='col-span-2 p-2 font-bold mb-3 text-left ml-1'>Product Name</span>
                 <span className='col-span-1 p-2 font-bold mb-3 md:text-left text-right'>Qty</span>
                 <span className='col-span-1 p-2 font-bold mb-3 hidden md:block md:text-middle xlg:text-right'>Status</span>
-                <span className='col-span-1 p-2 font-bold mb-3 text-center'>Rate</span>
-                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Tax</span>
-                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Discount</span>
+                <span className='col-span-2 p-2 font-bold mb-3 text-center'>Rate</span>
+                {/* <span className='col-span-1 p-2 font-bold mb-3 text-left'>Tax</span>
+                <span className='col-span-1 p-2 font-bold mb-3 text-left'>Discount</span> */}
                 <span className='col-span-2 p-2 font-bold mb-3 hidden md:block text-right lg:text-center'>Expiry</span>
                 <span className='col-span-1 p-2 font-bold mb-3 hidden text-left md:block'>Packing</span>
                 <span className='col-span-2 p-2 font-bold mb-3 text-right lg:text-left'>Actions</span>
                 {data?.map(itm => {
                     return (
                         <>
-                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.id}</span>
-                            <span className='col-span-1 px-2 mt-1'>{itm.product_name}</span>
+                            <span className='col-span-1 px-2 mt-1 text-left'>{itm.id}</span>
+                            <span className='col-span-2 px-2 mt-1 ml-1'>{itm.product_name}</span>
                             <span className='col-span-1 px-2 mt-1'>{itm.quantity}</span>
                             <span className='hidden md:block col-span-1 px-2 mt-1'>{itm.status}</span>
-                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.rate}</span>
-                            <span className='col-span-1 px-2 mt-1'>{itm.tax}</span>
-                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.discount}</span>
+                            <span className='col-span-2 px-2 mt-1 text-center'>{itm.rate}</span>
+                            {/* <span className='col-span-1 px-2 mt-1'>{itm.tax}</span>
+                            <span className='col-span-1 px-2 mt-1 text-center'>{itm.discount}</span> */}
                             <span className='col-span-2 px-2 mt-1 hidden md:block text-center'>{convertDate(itm.expiry_date)}</span>
                             <span className='col-span-1 px-2 mt-1 hidden md:block'>{itm.packing}</span>
                             <span className='hidden md:grid col-span-2 mt-1 w-fit h-fit grid-cols-3 gap-1' >

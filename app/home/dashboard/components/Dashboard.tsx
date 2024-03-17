@@ -13,6 +13,7 @@ import styles from './dashboard.module.scss'
 function Dashboard() {
     const base_year = 2022
     const [data, setData] = useState<number[]>()
+    console.log({data})
     const [hLine, setHLine] = useState(Object.values(short_months))
     enum mode {
         Monthly,
@@ -39,9 +40,9 @@ function Dashboard() {
         console.log({selectedYear})
         if(toggle === mode.Yearly) {
             setHLine(Object.values(short_months))
-            for(let i = data.length; i < Object.values(short_months).length; i++) {
-                console.log('jessy',Object.values(short_months)[i])
-            }
+            // for(let i = data.length; i < Object.values(short_months).length; i++) {
+            //     // console.log('jessy',Object.values(short_months)[i])
+            // }
         }
     }, [toggle])
     const getData = async () => {
@@ -55,12 +56,11 @@ function Dashboard() {
             setRev(r.data)
             if(toggle == mode.Monthly) {
                 const d: {[key: number]: number} = {}
-                console.log({aa: p4?.data})
                 p4?.data?.map(({sum, date}: {sum: number, date:string}) => {
-                    console.log({sum, date})
                     const day = +date.split('-')[2]
-                    if(!d[day])
+                    if(!d[day]){
                         return d[day] = sum
+                    }
                     return d[day] += sum
                 })
                 const lastDay = endOfMonth(new Date(selectedYear, selectedMonth)).getDate()
@@ -69,9 +69,11 @@ function Dashboard() {
                     tempHline.push(i)
                 }
                 setHLine(tempHline)
+                console.log({tempHline})
                 const temp: number[] = []
-                for(let i = 0; i < lastDay; i++) {
+                for(let i = 1; i <= lastDay; i++) {
                     if(d[i]) {
+                        console.log({d: d[i], i})
                         temp.push(d[i])
                         continue;
                     }
@@ -88,7 +90,7 @@ function Dashboard() {
                     return d[month] += sum
                 })
                 const temp: number[] = []
-                for(let i = 0; i < 12; i++) {
+                for(let i = 1; i <= 12; i++) {
                     if(d[i]) {
                         temp.push(d[i])
                         continue
@@ -104,7 +106,7 @@ function Dashboard() {
             }
         // Promise.
         } catch(err: any) {
-            if(err.response.status === 401) {
+            if(err?.response?.status === 401) {
                 router.push('/login')
                 Cookies.remove('token')
             }
@@ -125,7 +127,9 @@ function Dashboard() {
             setDataMode('Yearly')
         }
     }, [toggle, selectedMonth, selectedYear])
-    
+    // useEffect(() => {
+    //     if(togg)
+    // }, [dataMode])
     const handleMonthChange = (e: BaseSyntheticEvent) => {
         setSelectedMonth(e.target.value)
     }
