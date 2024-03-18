@@ -79,6 +79,7 @@ function Dashboard() {
                     }
                     temp.push(0)
                 }
+                
                 setData(temp)
             }
             else if(toggle === mode.Yearly) {
