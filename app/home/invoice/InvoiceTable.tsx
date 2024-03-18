@@ -59,7 +59,7 @@ function InvoiceTable({
             // Set the href attribute to the URL
             link.href = url;
             // Set the download attribute to specify filename
-            link.setAttribute('download', 'hello_world.pdf');
+            link.setAttribute('download', 'invoice.pdf');
             // Simulate click on the link to trigger download
             document.body.appendChild(link);
             link.click();

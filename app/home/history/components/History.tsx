@@ -28,7 +28,7 @@ function History() {
   const [data, setData] = useState([])
   const [currentPage, setCurrentPage] = useState(0)
   const [limit, setLimit] = useState(rowsPerPage)
-  const [total, setTotal] = useState(0)
+  const [total, setTotal] = useState(10)
   const [srchVal, setSrchVal] = useState('')
   const router = useRouter()
   useEffect(() => {
